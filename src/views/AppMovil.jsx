@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import PhoneFrame from '../components/PhoneFrame.jsx';
+import ChatMovil from '../flows/chat/ChatMovil.jsx';
 import { useStore } from '../store/StoreProvider.jsx';
 import { AGENDA_HOY, COMPROMISOS, HOY, dotPorId } from '../data/mock.js';
 
@@ -71,12 +72,7 @@ export default function AppMovil() {
         </>
       )}
 
-      {tab === 'chat' && (
-        <div className="tarjeta">
-          <h3>Chat</h3>
-          <p>El mismo hilo que ves en Slack. Se conecta en la fase 3.</p>
-        </div>
-      )}
+      {tab === 'chat' && <ChatMovil />}
 
       {tab === 'solicitar' && (
         <div className="tarjeta">

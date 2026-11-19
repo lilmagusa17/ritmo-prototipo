@@ -123,3 +123,41 @@
   color:var(--neutral-600); font-size:13px; text-align:center; max-width:390px;
 }
 .movil-ayuda a{ color:var(--violet-700); }
+
+/* Chat de la app móvil · mismo hilo que Slack (C4) */
+.chat-movil{ display:flex; flex-direction:column; gap:var(--space-8); }
+.burbuja{
+  max-width:85%; padding:var(--space-12);
+  border-radius:var(--radius-lg); font-size:14px; line-height:1.5;
+}
+.burbuja--ritmo{ align-self:flex-start; background:var(--neutral-0); border:1px solid var(--neutral-200); }
+.burbuja--laura{ align-self:flex-end; background:var(--violet-500); color:#fff; }
+.burbuja .adjunto{
+  margin-top:var(--space-8); padding-top:var(--space-8);
+  border-top:1px solid var(--neutral-200);
+  font-size:13px;
+}
+.burbuja .adjunto strong{ display:block; margin-bottom:var(--space-4); }
+.chips-movil{ display:flex; flex-wrap:wrap; gap:var(--space-8); }
+.chip-movil{
+  min-height:var(--touch-min); padding:0 var(--space-12);
+  border:1px solid var(--violet-500); border-radius:var(--radius-full);
+  background:var(--neutral-0); color:var(--violet-700);
+  font-size:13px; font-weight:600;
+}
+.composer-movil{
+  display:flex; gap:var(--space-8); align-items:flex-end;
+  padding-top:var(--space-12);
+}
+.composer-movil textarea{
+  flex:1; min-height:var(--touch-min); max-height:96px; padding:var(--space-12);
+  border:1px solid var(--neutral-300); border-radius:var(--radius-md);
+  font:14px/1.4 var(--font-ritmo); resize:none;
+}
+.composer-movil button{
+  min-height:var(--touch-min); min-width:var(--touch-min); padding:0 var(--space-16);
+  border:0; border-radius:var(--radius-md);
+  background:var(--violet-500); color:#fff; font-weight:600;
+}
+.composer-movil button:disabled{ background:var(--neutral-200); color:var(--neutral-500); }
+.escribiendo-movil{ color:var(--neutral-500); font-size:13px; font-style:italic; margin:0; }

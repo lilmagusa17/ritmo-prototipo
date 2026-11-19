@@ -266,3 +266,9 @@
   font-size:14px; line-height:1.6;
 }
 .vacio .glifo{ font-size:28px; display:block; margin-bottom:var(--space-8); }
+
+/* Indicador "RITMO está escribiendo…" (C4) */
+.escribiendo{
+  margin:0 var(--space-16) var(--space-8) 60px;
+  color:#616061; font-size:13px; font-style:italic;
+}

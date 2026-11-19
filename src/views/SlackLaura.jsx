@@ -8,6 +8,7 @@ import { Mensaje, Attachment, Acciones, BotonSlack, DiaSeparador } from '../comp
 import FechaCambio, { ComparacionTres } from '../components/FechaCambio.jsx';
 import PanelSolicitud from '../flows/solicitud/PanelSolicitud.jsx';
 import PanelMisSolicitudes from '../flows/solicitud/PanelMisSolicitudes.jsx';
+import useChatRitmo from '../flows/chat/useChatRitmo.js';
 import { useStore } from '../store/StoreProvider.jsx';
 import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA, SALTOS_RELOJ } from '../data/mock.js';
 
@@ -29,8 +30,14 @@ const PANTALLAS_MIS = ['L-08', 'L-08c', 'L-08d', 'L-09', 'L-09b'];
 
 const horaIndice = (hora) => SALTOS_RELOJ.findIndex((s) => s.hora === hora);
 
-function ComposerLaura() {
+function ComposerLaura({ onEnviar }) {
   const [texto, setTexto] = useState('');
+  const enviar = () => {
+    if (!texto.trim()) return;
+    onEnviar(texto);
+    setTexto('');
+  };
+
   return (
     <>
       <p className="composer-nota">
@@ -41,11 +48,17 @@ function ComposerLaura() {
           placeholder="Escribe un mensaje a RITMO"
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              enviar();
+            }
+          }}
           aria-label="Escribe un mensaje a RITMO"
         />
         <div className="composer-pie">
-          <span style={{ color: '#616061', fontSize: 12 }}>RITMO empieza a responder en la fase 4</span>
-          <button className="composer-enviar" disabled={!texto.trim()}>
+          <span style={{ color: '#616061', fontSize: 12 }}>Enter para enviar</span>
+          <button className="composer-enviar" disabled={!texto.trim()} onClick={enviar}>
             Enviar
           </button>
         </div>
@@ -54,8 +67,8 @@ function ComposerLaura() {
   );
 }
 
-/* Mensajes que vienen del store (envíos, respuestas de Miguel, chat de la fase 4) */
-function MensajeDeStore({ mensaje, onAccion }) {
+/* Mensajes del hilo: los escribe Laura, RITMO, o los produce el flujo de solicitud */
+export function MensajeDeStore({ mensaje, onAccion, onChip }) {
   const a = mensaje.attachment;
   return (
     <Mensaje autor={mensaje.de} hora={mensaje.at}>
@@ -85,6 +98,16 @@ function MensajeDeStore({ mensaje, onAccion }) {
           ))}
         </Acciones>
       )}
+      {/* Los chips envían el mensaje por la participante: no hace falta escribir (C4) */}
+      {mensaje.chips && (
+        <div className="chips">
+          {mensaje.chips.map((c) => (
+            <button key={c.texto} className="chip" onClick={() => onChip(c.envia)}>
+              {c.texto}
+            </button>
+          ))}
+        </div>
+      )}
     </Mensaje>
   );
 }
@@ -105,6 +128,7 @@ function CanalDemo({ nombre }) {
 
 export default function SlackLaura() {
   const { estado, dispatch } = useStore();
+  const { enviar, accion, escribiendo } = useChatRitmo();
   const [conv, setConv] = useState({ tipo: 'dm', id: 'ritmo' });
   const informe = COMPROMISOS[0];
   const esRitmo = conv.tipo === 'dm' && conv.id === 'ritmo';
@@ -117,16 +141,6 @@ export default function SlackLaura() {
   const abrirMisSolicitudes = () =>
     dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-08', lado: 'laura', solicitudId: null });
 
-  /* Botones que vienen dentro de un mensaje (L-06: aceptar o rechazar la alternativa) */
-  const accionDeMensaje = (accionId, solicitudId) => {
-    if (accionId === 'aceptar-alternativa') {
-      dispatch({ type: 'LAURA_RESUELVE_ALTERNATIVA', id: solicitudId, acepta: true });
-    }
-    if (accionId === 'rechazar-alternativa') {
-      dispatch({ type: 'LAURA_RESUELVE_ALTERNATIVA', id: solicitudId, acepta: false });
-    }
-  };
-
   const pendientes = estado.solicitudes.filter((s) => s.estado === 'pendiente');
   const hayRecordatorio = pendientes.length > 0 && horaIndice(estado.reloj) >= horaIndice('12:24');
   const esMisSolicitudes = PANTALLAS_MIS.includes(estado.panel.pantalla);
@@ -138,7 +152,7 @@ export default function SlackLaura() {
       onConversacion={setConv}
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Pedir un ajuste'}
       panel={esMisSolicitudes ? <PanelMisSolicitudes /> : <PanelSolicitud />}
-      composer={esRitmo ? <ComposerLaura /> : null}
+      composer={esRitmo ? <ComposerLaura onEnviar={enviar} /> : null}
     >
       {esRitmo ? (
         <>
@@ -160,6 +174,7 @@ export default function SlackLaura() {
               </p>
             </Attachment>
             <Acciones>
+              <BotonSlack onClick={() => enviar('organiza mi día')}>Organizar mi día</BotonSlack>
               <BotonSlack onClick={abrirSolicitud}>Pedir un ajuste</BotonSlack>
               <BotonSlack onClick={abrirMisSolicitudes}>Ver mis solicitudes</BotonSlack>
             </Acciones>
@@ -220,8 +235,14 @@ export default function SlackLaura() {
 
           {/* Mensajes del flujo: envíos (L-05), respuestas de Miguel (L-06, L-07x) */}
           {estado.chat.map((m) => (
-            <MensajeDeStore key={m.id} mensaje={m} onAccion={accionDeMensaje} />
+            <MensajeDeStore key={m.id} mensaje={m} onAccion={accion} onChip={enviar} />
           ))}
+
+          {escribiendo && (
+            <p className="escribiendo" role="status">
+              RITMO está escribiendo…
+            </p>
+          )}
 
           {/* L-05b · sigue pendiente a las 12:24 */}
           {hayRecordatorio && (
