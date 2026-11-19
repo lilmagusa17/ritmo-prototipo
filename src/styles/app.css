@@ -41,7 +41,8 @@
 .push span{ display:block; color:var(--neutral-600); font-size:13px; }
 .push button{
   min-width:var(--touch-min); min-height:32px;
-  border:0; background:none; color:var(--neutral-500); font-size:16px;
+  min-height:var(--touch-min);
+  border:0; background:none; color:var(--neutral-600); font-size:16px;
   border-radius:var(--radius-sm);
 }
 
@@ -91,7 +92,7 @@
   border:0; background:none;
   display:grid; justify-items:center; gap:2px;
   padding:var(--space-8) 0 var(--space-4);
-  color:var(--neutral-500); font-size:11px; font-weight:600;
+  color:var(--neutral-600); font-size:11px; font-weight:600;
 }
 .tab .glifo{ font-size:18px; line-height:1; }
 .tab[aria-current="page"]{ color:var(--violet-600); }
@@ -160,7 +161,7 @@
   background:var(--violet-500); color:#fff; font-weight:600;
 }
 .composer-movil button:disabled{ background:var(--neutral-200); color:var(--neutral-500); }
-.escribiendo-movil{ color:var(--neutral-500); font-size:13px; font-style:italic; margin:0; }
+.escribiendo-movil{ color:var(--neutral-600); font-size:13px; font-style:italic; margin:0; }
 
 /* Onboarding y pantallas de la app (C5) */
 .movil-titulo{ font-size:20px; margin:0 0 var(--space-8); letter-spacing:-.01em; }
@@ -214,7 +215,7 @@
 .etiqueta-estado--azul{ background:var(--blue-100); color:var(--blue-600); }
 
 .fecha-movil{ font-size:14px; line-height:1.5; margin:0 0 var(--space-8); }
-.fecha-movil .vieja{ color:var(--neutral-500); text-decoration:line-through; }
+.fecha-movil .vieja{ color:var(--neutral-600); text-decoration:line-through; }
 
 .progreso{
   display:flex; gap:6px; margin:0 0 var(--space-16);

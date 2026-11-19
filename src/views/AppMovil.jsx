@@ -191,7 +191,7 @@ export default function AppMovil() {
               const etiqueta = ETIQUETAS_ESTADO[s.estado];
               const destino =
                 s.estado === 'acordada'
-                  ? s.alternativaMiguel
+                  ? s.alternativaMiguel || s.propuesta
                   : s.estado === 'rechazada' || s.estado === 'rechazo_alt' || s.estado === 'cancelada'
                     ? 'sigue igual'
                     : s.propuesta;
@@ -204,7 +204,7 @@ export default function AppMovil() {
                   <span className={`etiqueta-estado etiqueta-estado--${TONO_ETIQUETA[s.estado] || 'neutral'}`}>
                     {etiqueta?.texto}
                   </span>
-                  <p style={{ margin: 'var(--space-8) 0 0', color: 'var(--neutral-500)', fontSize: 13 }}>
+                  <p style={{ margin: 'var(--space-8) 0 0', color: 'var(--neutral-600)', fontSize: 13 }}>
                     {s.fecha}
                   </p>
                 </div>

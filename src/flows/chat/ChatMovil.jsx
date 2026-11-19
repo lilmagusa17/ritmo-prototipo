@@ -51,7 +51,7 @@ export default function ChatMovil() {
                   )}
                   {m.attachment.fecha && (
                     <p style={{ margin: 0 }}>
-                      <span style={{ textDecoration: 'line-through', color: 'var(--neutral-500)' }}>
+                      <span style={{ textDecoration: 'line-through', color: 'var(--neutral-600)' }}>
                         {m.attachment.fecha.original}
                       </span>{' '}
                       → <strong style={{ display: 'inline' }}>{m.attachment.fecha.nueva}</strong>

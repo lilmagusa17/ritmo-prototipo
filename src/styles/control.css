@@ -24,7 +24,7 @@
   margin-bottom:var(--space-16);
 }
 .bloque h2{ font-size:14px; margin:0 0 var(--space-12); letter-spacing:.01em; }
-.bloque h2 .pista{ color:var(--neutral-500); font-weight:500; margin-left:var(--space-8); font-size:12px; }
+.bloque h2 .pista{ color:var(--neutral-600); font-weight:500; margin-left:var(--space-8); font-size:12px; }
 
 .fila{ display:flex; flex-wrap:wrap; gap:var(--space-8); }
 
@@ -45,7 +45,7 @@
 .bmod--peligro{ color:var(--red-600); border-color:#d9415b55; }
 .bmod:disabled{ opacity:.45; cursor:not-allowed; }
 .bmod .kbd{
-  font-size:11px; font-weight:700; color:var(--neutral-500);
+  font-size:11px; font-weight:700; color:var(--neutral-600);
   border:1px solid var(--neutral-300); border-radius:4px; padding:0 4px;
 }
 
@@ -86,4 +86,26 @@
   color:var(--neutral-900); text-decoration:none; font-size:14px; font-weight:600;
 }
 .enlaces a:hover{ border-color:var(--violet-500); color:var(--violet-700); }
-.enlaces a code{ font-size:12px; color:var(--neutral-500); font-weight:400; }
+.enlaces a code{ font-size:12px; color:var(--neutral-600); font-weight:400; }
+
+/* Guion de la sesión (F7). Vive arriba del panel y se puede cerrar. */
+.guion{
+  background:var(--neutral-0);
+  border:1px solid var(--neutral-200);
+  border-radius:var(--radius-lg);
+  padding:var(--space-16);
+  margin-bottom:var(--space-24);
+  max-width:900px;
+}
+.guion > summary{
+  cursor:pointer; font-weight:700; font-size:15px;
+  min-height:var(--touch-min); display:flex; align-items:center;
+}
+.guion h3{ margin:var(--space-16) 0 var(--space-8); font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--neutral-600); }
+.guion ol{ margin:0; padding-left:var(--space-24); }
+.guion li{ margin-bottom:var(--space-8); font-size:14px; line-height:1.55; }
+.guion p{ margin:0; font-size:14px; line-height:1.55; color:var(--neutral-600); }
+.guion code{
+  background:var(--neutral-100); border-radius:var(--radius-sm);
+  padding:1px 5px; font-size:13px;
+}

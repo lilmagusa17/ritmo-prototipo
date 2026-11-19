@@ -30,7 +30,7 @@ const horaIndice = (hora) => SALTOS_RELOJ.findIndex((s) => s.hora === hora);
 
 /* Qué fecha queda en firme según el estado (C2: siempre original → algo) */
 function destinoDe(s) {
-  if (s.estado === 'alternativa' || s.estado === 'acordada') return s.alternativaMiguel;
+  if (s.estado === 'alternativa' || s.estado === 'acordada') return s.alternativaMiguel || s.propuesta;
   if (s.estado === 'rechazada' || s.estado === 'rechazo_alt') return 'sigue igual';
   return s.propuesta;
 }
@@ -76,7 +76,7 @@ export default function SlackMiguel() {
             <Mensaje hora="9:00">
               <p>No tienes solicitudes pendientes.</p>
               <p style={{ color: '#616061' }}>
-                Cuando alguien de tu equipo pida un ajuste, te llega aquí con su nombre y el compromiso.
+                Cuando alguien del equipo pida un ajuste, te llega aquí con su nombre y el compromiso que quiere mover.
               </p>
             </Mensaje>
           )}

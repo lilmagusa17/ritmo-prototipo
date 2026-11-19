@@ -1,5 +1,20 @@
 # RITMO · Plan de desarrollo ágil (prototipo listo para pruebas mañana)
 
+> **Estado: F0 a F7 terminadas.** El prototipo corre con `npm install && npm run dev` y `npm run build` pasa limpio.
+> Las seis tareas de la prueba (T1–T6) se recorrieron de punta a punta en el navegador. El guion de moderación
+> vive arriba de `#/control`, así que no hace falta llevar este documento a la sesión.
+>
+> | Fase | Commit |
+> |---|---|
+> | F0 base | `c79f38a` |
+> | F1 shells + control | `121d591` |
+> | F2 solicitud de Laura (T3) | `da18ec2` |
+> | F3 Miguel y cierre de ciclo (T4, T5) | `bfae0bb` |
+> | F4 chat guionado (T2) | `9211a5b` |
+> | F5 app móvil y onboarding (T1) | `69bdddd` |
+> | F6 RITMO Dot (T6) | `4094e35` |
+> | F7 pulido y ensayo | este commit |
+
 > Estado al escribir este plan: carpeta vacía (solo `CLAUDE.md` y `PROMPT-INICIAL.md`). Node v22.14.0, npm 10.9.2 — listo para `npm create vite`.
 > Objetivo: **prototipo corriendo y moderable mañana**, no producto. Fuente de verdad del contenido: `CLAUDE.md` (correcciones C1–C7 mandan sobre Figma).
 
@@ -165,3 +180,38 @@ Los tres componentes de `components/` de la primera línea se construyen **una v
 - [ ] Tab por teclado: foco visible en el checkbox de consentimiento y en "Enviar a Miguel"
 - [ ] El log de `#/control` tiene hora en cada evento (sirve de notas de la sesión)
 ```
+
+
+---
+
+## 8. Cierre de F7 · qué se revisó
+
+**Copy prohibido** (`anonim`, `alguien de tu equipo`, `descarga`, `cruce`, `represalia`, `Indicador RITMO`,
+`estado detallado`): cero apariciones en texto de interfaz. Lo único que quedó fue el vacío de M-07, que ahora dice
+"Cuando alguien del equipo pida un ajuste, te llega aquí con su nombre y el compromiso que quiere mover". Las demás
+coincidencias son comentarios del código que explican la corrección.
+
+**Criterios de §8**
+
+- **Áreas táctiles ≥ 44 px:** medidas en el marco del teléfono, descontando la escala; la única que faltaba era la ✕
+  del banner push (32 px), ahora 44.
+- **Foco visible con teclado:** anillo violeta global; sobre el morado del sidebar de Slack el anillo pasa a blanco,
+  donde el violeta no contrastaba.
+- **Contraste AA:** `--neutral-500` dejó de usarse para texto (tabs, "RITMO está escribiendo…", fechas, pistas del
+  panel) y pasó a `--neutral-600`; el gris de Slack `#ffffff8c` del sidebar subió a `#ffffffb3` y el rojo de los
+  botones de peligro a `#c0143c`.
+- **Nada solo por color:** el Dot viaja siempre con su nombre (en `#/dot`, en el mensaje de Slack, en la tarjeta del
+  teléfono y en el `title` del avatar); las etiquetas de estado llevan texto.
+- **Estados vacíos y de error:** L-08b, M-07 vacío, APP-07 vacío, validación L-03b, error de envío L-04b y código
+  vencido APP-01b, todos presentes y disparables desde `#/control`.
+
+**Corregido durante el ensayo**
+
+- "Mis solicitudes" (L-08) no mostraba las fechas: ahora cada fila lleva `original → la que queda en firme` (C2).
+- Una solicitud acordada del historial de ejemplo mostraba la flecha sin destino, porque no guarda alternativa de
+  Miguel; ahora cae en la propuesta de Laura.
+
+**Recorrido T1–T6** (tres ventanas, mismo navegador): vincular con código y configurar el Dot · chat por palabras
+clave con chips · aviso de choque, consentimiento y envío · alternativa de Miguel, comparación de tres fechas y
+acuerdo · cancelación que desaparece de la bandeja de Miguel y baja el contador · cambio de Dot con luz, mensaje en
+Slack y aviso en el teléfono.

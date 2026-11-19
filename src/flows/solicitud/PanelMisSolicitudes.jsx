@@ -34,24 +34,36 @@ export default function PanelMisSolicitudes() {
         <h3 className="panel-titulo">Mis solicitudes</h3>
         <p className="panel-intro">Solo tú ves esta lista.</p>
         <div className="opciones">
-          {estado.solicitudes.map((s) => (
-            <button
-              key={s.id}
-              className="opcion"
-              aria-label={`${s.tipoTitulo}, ${s.compromiso}, ${ETIQUETAS_ESTADO[s.estado]?.texto}`}
-              onClick={() => irA('L-08c', s.id)}
-            >
-              <span className="radio-falso" aria-hidden="true" />
-              <span>
-                <strong>
-                  {s.fecha} · {s.tipoTitulo}
-                </strong>
+          {estado.solicitudes.map((s) => {
+            /* C2 · la fila también muestra original → fecha que queda en firme */
+            const haciaDonde =
+              s.estado === 'acordada'
+                ? s.alternativaMiguel || s.propuesta
+                : s.estado === 'rechazada' || s.estado === 'rechazo_alt' || s.estado === 'cancelada'
+                  ? 'sigue igual'
+                  : s.propuesta;
+            return (
+              <button
+                key={s.id}
+                className="opcion"
+                aria-label={`${s.tipoTitulo}, ${s.compromiso}, de ${s.fechaOriginal} a ${haciaDonde}, ${ETIQUETAS_ESTADO[s.estado]?.texto}`}
+                onClick={() => irA('L-08c', s.id)}
+              >
+                <span className="radio-falso" aria-hidden="true" />
                 <span>
-                  {s.compromiso} · {ETIQUETAS_ESTADO[s.estado]?.texto}
+                  <strong>
+                    {s.fecha} · {s.tipoTitulo}
+                  </strong>
+                  <span>
+                    {s.compromiso} · {ETIQUETAS_ESTADO[s.estado]?.texto}
+                  </span>
+                  <span className="fila-fechas">
+                    <span className="vieja">{s.fechaOriginal}</span> → <strong>{haciaDonde}</strong>
+                  </span>
                 </span>
-              </span>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </>
     );
@@ -60,7 +72,7 @@ export default function PanelMisSolicitudes() {
   const etiqueta = ETIQUETAS_ESTADO[solicitud.estado];
   const destino =
     solicitud.estado === 'acordada'
-      ? solicitud.alternativaMiguel
+      ? solicitud.alternativaMiguel || solicitud.propuesta
       : solicitud.estado === 'rechazada' || solicitud.estado === 'rechazo_alt' || solicitud.estado === 'cancelada'
         ? 'sigue igual'
         : solicitud.propuesta;

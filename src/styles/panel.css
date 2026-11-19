@@ -146,3 +146,8 @@
   font-size:15px; line-height:1.5;
 }
 .exito .glifo{ font-size:18px; line-height:1.2; }
+
+/* Fechas original → firme en cada fila de "Mis solicitudes" (C2) */
+.opcion .fila-fechas{ display:block; margin-top:2px; font-size:13px; color:#454245; }
+.opcion .fila-fechas .vieja{ color:#616061; text-decoration:line-through; }
+.opcion .fila-fechas strong{ display:inline; }

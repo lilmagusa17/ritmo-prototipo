@@ -99,6 +99,66 @@ export default function Control() {
         No lo ve el participante. Cada acción queda en el log con la hora simulada, para las notas de la sesión.
       </p>
 
+      {/* Guion de la sesión: abierto por defecto para el ensayo, se cierra en la prueba real */}
+      <details className="guion" open>
+        <summary>Guion de la sesión · montaje y tareas</summary>
+
+        <h3>Montaje (3 ventanas, mismo navegador)</h3>
+        <ol>
+          <li>
+            Laptop del participante: <code>#/slack/laura</code> a pantalla completa.
+          </li>
+          <li>
+            Segunda ventana con el teléfono: <code>#/app</code>.
+          </li>
+          <li>
+            Tablet o segunda pantalla junto al participante: <code>#/dot</code> (doble clic = pantalla completa).
+          </li>
+          <li>
+            Tu ventana: este panel. Si hay un segundo participante, dale <code>#/slack/miguel</code>; si no, responde tú
+            desde “Miguel responde”.
+          </li>
+          <li>
+            Antes de empezar: <strong>Reset total</strong>. El reloj queda en 9:00 y el onboarding arranca desde cero.
+          </li>
+        </ol>
+
+        <h3>Tareas</h3>
+        <ol>
+          <li>
+            <strong>T1 · Configurar.</strong> “Acabas de instalar RITMO en Slack y quieres conectarlo con tu teléfono.”
+            El código de Slack es <code>4 7 2 9</code>. No ayudes con el copy: queremos saber si entiende qué se
+            comparte.
+          </li>
+          <li>
+            <strong>T2 · Organizar el día.</strong> “Cuéntale a RITMO cómo va tu día.” Deja que escriba lo que quiera;
+            el bot responde por palabras clave (hoy, organiza, semana, saturada, pausa, ajuste, dot).
+          </li>
+          <li>
+            <strong>T3 · Pedir un ajuste.</strong> Salta a <strong>10:12</strong> para que llegue el aviso de choque.
+            Observa si lee el bloque “Miguel sabrá que esta solicitud es tuya” antes de marcar la casilla.
+          </li>
+          <li>
+            <strong>T4 · Negociar.</strong> Usa <strong>Miguel propone alternativa</strong>. Mira si compara las tres
+            fechas (actual · suya · de Miguel) antes de aceptar.
+          </li>
+          <li>
+            <strong>T5 · Cancelar.</strong> Pídele que cancele una solicitud pendiente y luego muéstrale la ventana de
+            Miguel: ya no está.
+          </li>
+          <li>
+            <strong>T6 · Dot.</strong> Dispara <strong>Empieza bloque de foco</strong> sin avisar y no digas nada.
+            Anota si nota la luz, el mensaje de Slack o el aviso del teléfono, y en qué orden.
+          </li>
+        </ol>
+
+        <h3>Si algo se rompe</h3>
+        <p>
+          Reset total y volver a la tarea; con “Saltar onboarding” llegas a la tarea 2 en un clic. El estado vive en este
+          navegador: no cierres las ventanas entre tareas.
+        </p>
+      </details>
+
       <div className="control-grid">
         <div>
           <section className="bloque">
