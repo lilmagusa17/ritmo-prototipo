@@ -10,7 +10,7 @@ import PanelSolicitud from '../flows/solicitud/PanelSolicitud.jsx';
 import PanelMisSolicitudes from '../flows/solicitud/PanelMisSolicitudes.jsx';
 import useChatRitmo from '../flows/chat/useChatRitmo.js';
 import { useStore } from '../store/StoreProvider.jsx';
-import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA, SALTOS_RELOJ } from '../data/mock.js';
+import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA, SALTOS_RELOJ, CODIGO_VINCULO } from '../data/mock.js';
 
 const TITULOS_PANEL = {
   'L-02': 'Pedir un ajuste',
@@ -112,6 +112,85 @@ export function MensajeDeStore({ mensaje, onAccion, onChip }) {
   );
 }
 
+/* Onboarding de Laura en Slack (T1).
+   O-01 Bienvenida (125:15167) → O-02 Conecta tu app con código (125:15360)
+   · O-02b código vencido (125:15711) → O-03 App vinculada (125:16071)
+
+   El código es el mismo que pide APP-01 en el teléfono: las dos pantallas se
+   enlazan por ahí, así el participante vive la vinculación de verdad. */
+function OnboardingLaura() {
+  const { estado, dispatch } = useStore();
+  const paso = estado.onboarding.slackLaura;
+  const [vencido, setVencido] = useState(false);
+  const ir = (p) => dispatch({ type: 'ONBOARDING_SET', superficie: 'slackLaura', paso: p });
+
+  return (
+    <>
+      <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+
+      {/* O-01 · bienvenida. Bullets de C6: nada de promesas de anonimato */}
+      <Mensaje hora="8:55">
+        <p>Hola, Laura. Soy RITMO. Te ayudo a organizar tu día y a pedir un ajuste cuando algo no cabe.</p>
+        <Attachment titulo="Cómo trabajo contigo">
+          <p>Comparo tus tareas nuevas con tu agenda.</p>
+          <p>Tu agenda y este chat son solo tuyos.</p>
+          <p>Miguel solo ve lo que tú decidas enviarle, con tu nombre.</p>
+          <p>Nada se envía sin que lo confirmes.</p>
+        </Attachment>
+        {paso === 'bienvenida' && (
+          <Acciones>
+            <BotonSlack variante="primario" onClick={() => ir('codigo')}>
+              Conectar mi teléfono
+            </BotonSlack>
+          </Acciones>
+        )}
+      </Mensaje>
+
+      {/* O-02 · código para vincular · O-02b · código vencido */}
+      {paso !== 'bienvenida' && (
+        <Mensaje hora="8:56">
+          {vencido ? (
+            <p>Ese código venció. Aquí tienes uno nuevo:</p>
+          ) : (
+            <p>Abre RITMO en tu teléfono y escribe este código:</p>
+          )}
+          <Attachment titulo="Código para vincular" pie="El código vence en 5 minutos.">
+            <p className="codigo-slack">{vencido ? '8 1 3 5' : CODIGO_VINCULO}</p>
+            <p>
+              Lo escribes en la app del teléfono ·{' '}
+              <a href="#/app" target="_blank" rel="noreferrer">
+                abrir la app
+              </a>
+            </p>
+          </Attachment>
+          {paso === 'codigo' && !vencido && (
+            <Acciones>
+              <BotonSlack onClick={() => setVencido(true)}>Pedir otro código</BotonSlack>
+            </Acciones>
+          )}
+        </Mensaje>
+      )}
+
+      {/* O-03 · app vinculada */}
+      {paso === 'vinculada' && (
+        <Mensaje hora="8:58">
+          <p>Listo, tu teléfono quedó vinculado.</p>
+          <Attachment titulo="App vinculada" tono="verde" pie="Ves el mismo chat en Slack y en el teléfono.">
+            <p>
+              <strong>Teléfono de Laura</strong> · conectado
+            </p>
+          </Attachment>
+          <Acciones>
+            <BotonSlack variante="primario" onClick={() => ir('listo')}>
+              Empezar
+            </BotonSlack>
+          </Acciones>
+        </Mensaje>
+      )}
+    </>
+  );
+}
+
 function CanalDemo({ nombre }) {
   return (
     <>
@@ -144,6 +223,7 @@ export default function SlackLaura() {
   const pendientes = estado.solicitudes.filter((s) => s.estado === 'pendiente');
   const hayRecordatorio = pendientes.length > 0 && horaIndice(estado.reloj) >= horaIndice('12:24');
   const esMisSolicitudes = PANTALLAS_MIS.includes(estado.panel.pantalla);
+  const onboardingListo = estado.onboarding.slackLaura === 'listo';
 
   return (
     <SlackShell
@@ -152,9 +232,11 @@ export default function SlackLaura() {
       onConversacion={setConv}
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Pedir un ajuste'}
       panel={esMisSolicitudes ? <PanelMisSolicitudes /> : <PanelSolicitud />}
-      composer={esRitmo ? <ComposerLaura onEnviar={enviar} /> : null}
+      composer={esRitmo && onboardingListo ? <ComposerLaura onEnviar={enviar} /> : null}
     >
-      {esRitmo ? (
+      {esRitmo && !onboardingListo ? (
+        <OnboardingLaura />
+      ) : esRitmo ? (
         <>
           <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
 

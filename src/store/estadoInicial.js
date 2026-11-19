@@ -20,6 +20,14 @@ export const estadoInicial = () => ({
   },
   appVinculada: false,
 
+  /* Avisos que elige Laura en APP-02 (copy nuevo de C5) */
+  avisos: {
+    choques: true,        // "Choques de fechas"
+    respuestas: true,     // cuando Miguel responde
+    bloquesFoco: true,    // cuando empieza un bloque de foco
+  },
+  dotConfigurado: false,
+
   /* RITMO Dot (C7) */
   dot: {
     estado: 'disponible',

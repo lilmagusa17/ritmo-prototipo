@@ -32,6 +32,7 @@ export function reducer(estado, accion) {
           ...estado,
           onboarding: { slackLaura: 'listo', slackMiguel: 'listo', app: 'listo' },
           appVinculada: true,
+          dotConfigurado: true,
         },
         'Onboarding saltado',
       );
@@ -96,6 +97,12 @@ export function reducer(estado, accion) {
     /* ---------- Onboarding ---------- */
     case 'ONBOARDING_SET':
       return { ...estado, onboarding: { ...estado.onboarding, [accion.superficie]: accion.paso } };
+
+    case 'AVISO_TOGGLE':
+      return { ...estado, avisos: { ...estado.avisos, [accion.aviso]: accion.valor } };
+
+    case 'DOT_CONFIGURADO':
+      return anotar({ ...estado, dotConfigurado: true }, 'Dot configurado desde la app');
 
     case 'APP_VINCULADA':
       return anotar({ ...estado, appVinculada: true }, 'App vinculada con el código');

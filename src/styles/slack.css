@@ -272,3 +272,11 @@
   margin:0 var(--space-16) var(--space-8) 60px;
   color:#616061; font-size:13px; font-style:italic;
 }
+
+/* Código para vincular el teléfono (O-02 / O-02b) */
+.codigo-slack{
+  font: 700 28px/1.2 var(--font-slack, system-ui);
+  letter-spacing:.22em;
+  margin:0 0 var(--space-8);
+  color:#1d1c1d;
+}
