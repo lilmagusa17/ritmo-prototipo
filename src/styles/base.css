@@ -1,0 +1,87 @@
+/* RITMO · estilos base compartidos (índice y placeholders de fase 0) */
+
+.indice{
+  max-width:860px;
+  margin:0 auto;
+  padding:var(--space-32) var(--space-24) var(--space-32);
+}
+
+.indice h1{
+  font-size:28px;
+  margin:0 0 var(--space-8);
+  letter-spacing:-0.02em;
+}
+
+.indice .sub{
+  color:var(--neutral-600);
+  margin:0 0 var(--space-24);
+  font-size:15px;
+  line-height:1.5;
+}
+
+.rutas{
+  display:grid;
+  gap:var(--space-12);
+  list-style:none;
+  padding:0;
+  margin:0 0 var(--space-32);
+}
+
+.ruta-card{
+  display:block;
+  padding:var(--space-16);
+  background:var(--neutral-0);
+  border:1px solid var(--neutral-200);
+  border-radius:var(--radius-lg);
+  text-decoration:none;
+  color:inherit;
+  transition:border-color .15s, transform .15s;
+}
+.ruta-card:hover{ border-color:var(--violet-500); transform:translateY(-1px); }
+.ruta-card strong{ display:block; font-size:16px; margin-bottom:var(--space-4); }
+.ruta-card span{ color:var(--neutral-600); font-size:14px; }
+.ruta-card code{
+  display:inline-block; margin-top:var(--space-8);
+  font-size:12px; color:var(--violet-700);
+  background:var(--violet-50); padding:2px 6px; border-radius:var(--radius-sm);
+}
+
+/* Tira de estado vivo: sirve para comprobar el sync entre ventanas */
+.estado-vivo{
+  display:flex; flex-wrap:wrap; gap:var(--space-16); align-items:center;
+  padding:var(--space-12) var(--space-16);
+  background:var(--neutral-100);
+  border:1px solid var(--neutral-200);
+  border-radius:var(--radius-md);
+  font-size:13px;
+  color:var(--neutral-600);
+}
+.estado-vivo b{ color:var(--neutral-900); font-weight:600; }
+.estado-vivo .punto{
+  display:inline-block; width:10px; height:10px; border-radius:var(--radius-full);
+  margin-right:6px; vertical-align:middle;
+}
+
+.boton{
+  min-height:var(--touch-min);
+  padding:0 var(--space-16);
+  border-radius:var(--radius-md);
+  border:1px solid var(--neutral-300);
+  background:var(--neutral-0);
+  color:var(--neutral-900);
+  font-size:14px; font-weight:600;
+}
+.boton:hover{ background:var(--neutral-100); }
+.boton--primario{ background:var(--violet-500); border-color:var(--violet-500); color:#fff; }
+.boton--primario:hover{ background:var(--violet-600); }
+
+/* Placeholder de fase 0: se reemplaza por el shell real en fase 1 */
+.placeholder{
+  min-height:100%;
+  padding:var(--space-32) var(--space-24);
+  max-width:760px; margin:0 auto;
+}
+.placeholder h1{ font-size:22px; margin:0 0 var(--space-4); }
+.placeholder .pantalla{ color:var(--neutral-500); font-size:13px; margin:0 0 var(--space-24); }
+.placeholder .volver{ color:var(--violet-700); font-size:14px; }
+.placeholder ul{ color:var(--neutral-600); font-size:14px; line-height:1.7; }
