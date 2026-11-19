@@ -3,6 +3,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/slack.css';
 import './styles/app.css';
+import './styles/panel.css';
 import { StoreProvider } from './store/StoreProvider.jsx';
 import App from './App.jsx';
 

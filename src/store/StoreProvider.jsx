@@ -1,14 +1,18 @@
-/* RITMO · store global: context + useReducer, persistido en localStorage y
-   sincronizado entre ventanas del mismo navegador (CLAUDE.md §2).
+/* RITMO · store global: un solo estado compartido entre todas las ventanas (CLAUDE.md §2).
 
-   Dos canales a propósito:
-   - evento `storage`: avisa a las otras pestañas cuando cambia localStorage.
-   - BroadcastChannel: refuerzo inmediato, no depende de que el navegador dispare `storage`.
+   localStorage es la fuente de verdad, no la copia en memoria de cada ventana.
+   Cada dispatch lee lo último guardado, aplica el reducer encima y vuelve a escribir.
+   Sin esto, dos ventanas que actúan casi a la vez (el moderador en #/control y la
+   participante en Slack) se pisan: la última en escribir borra lo que hizo la otra.
+
+   Dos canales para avisar del cambio:
+   - BroadcastChannel: inmediato entre pestañas del mismo navegador.
+   - evento `storage`: respaldo, por si el navegador no soporta BroadcastChannel.
 
    Limitación conocida y aceptada: solo sincroniza ventanas del mismo navegador y
    computador. Para la prueba alcanza (Slack, móvil y Dot en tres ventanas). */
 
-import { createContext, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { reducer } from './reducer.js';
 import { estadoInicial, CLAVE_STORAGE, CANAL_SYNC } from './estadoInicial.js';
 
@@ -17,41 +21,58 @@ const StoreContext = createContext(null);
 function leerGuardado() {
   try {
     const crudo = localStorage.getItem(CLAVE_STORAGE);
-    if (!crudo) return estadoInicial();
+    if (!crudo) return null;
     const guardado = JSON.parse(crudo);
-    if (guardado?.version !== 1) return estadoInicial();
+    if (guardado?.version !== 1) return null;
     // Mezcla con el inicial para que las claves nuevas no rompan una sesión vieja.
     return { ...estadoInicial(), ...guardado };
   } catch {
-    return estadoInicial();
+    return null;
+  }
+}
+
+function guardar(estado) {
+  try {
+    localStorage.setItem(CLAVE_STORAGE, JSON.stringify(estado));
+  } catch {
+    /* cuota llena: el prototipo sigue funcionando en memoria */
   }
 }
 
 export function StoreProvider({ children }) {
-  const [estado, dispatch] = useReducer(reducer, null, leerGuardado);
+  const [estado, setEstado] = useState(() => {
+    const guardado = leerGuardado();
+    if (guardado) return guardado;
+    const inicial = estadoInicial();
+    guardar(inicial);
+    return inicial;
+  });
 
-  // Si el cambio vino de otra ventana, no lo volvemos a emitir: evita el eco infinito.
-  const desdeRemoto = useRef(false);
   const canal = useRef(null);
+
+  const dispatch = useCallback((accion) => {
+    // Siempre sobre lo último guardado, no sobre la copia de esta ventana.
+    const base = leerGuardado() || estadoInicial();
+    const siguiente = reducer(base, accion);
+    guardar(siguiente);
+    setEstado(siguiente);
+    canal.current?.postMessage({ tipo: 'estado', estado: siguiente });
+  }, []);
 
   useEffect(() => {
     if (typeof BroadcastChannel !== 'undefined') {
       canal.current = new BroadcastChannel(CANAL_SYNC);
       canal.current.onmessage = (ev) => {
-        if (ev.data?.tipo === 'estado') {
-          desdeRemoto.current = true;
-          dispatch({ type: 'HIDRATAR', estado: ev.data.estado });
-        }
+        if (ev.data?.tipo === 'estado') setEstado(ev.data.estado);
       };
     }
 
     const alCambiarStorage = (ev) => {
       if (ev.key !== CLAVE_STORAGE || !ev.newValue) return;
       try {
-        desdeRemoto.current = true;
-        dispatch({ type: 'HIDRATAR', estado: JSON.parse(ev.newValue) });
+        setEstado(JSON.parse(ev.newValue));
       } catch {
-        /* JSON a medio escribir: la siguiente emisión lo corrige */
+        /* JSON a medio escribir: el siguiente aviso lo corrige */
       }
     };
 
@@ -62,20 +83,7 @@ export function StoreProvider({ children }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (desdeRemoto.current) {
-      desdeRemoto.current = false;
-      return;
-    }
-    try {
-      localStorage.setItem(CLAVE_STORAGE, JSON.stringify(estado));
-    } catch {
-      /* cuota llena: el prototipo sigue funcionando en memoria */
-    }
-    canal.current?.postMessage({ tipo: 'estado', estado });
-  }, [estado]);
-
-  const valor = useMemo(() => ({ estado, dispatch }), [estado]);
+  const valor = useMemo(() => ({ estado, dispatch }), [estado, dispatch]);
   return <StoreContext.Provider value={valor}>{children}</StoreContext.Provider>;
 }
 

@@ -1,0 +1,148 @@
+/* Panel derecho de Slack: formulario de solicitud (L-02 … L-05).
+   Sigue siendo Slack por fuera (§3): tipografía Lato, botones verdes/grises. */
+
+.panel-cuerpo{ font-family:var(--font-slack); }
+
+.paso-indicador{
+  font-size:13px; color:#616061; font-weight:700;
+  margin:0 0 var(--space-12);
+}
+
+.panel-titulo{ font-size:18px; font-weight:900; margin:0 0 var(--space-4); }
+.panel-intro{ font-size:15px; line-height:1.5; color:#454245; margin:0 0 var(--space-16); }
+
+/* Tarjetas de opción (tipo de ajuste, fechas, prioridad) */
+.opciones{ display:grid; gap:var(--space-8); margin:0 0 var(--space-16); }
+.opcion{
+  display:grid; grid-template-columns:20px 1fr; gap:var(--space-12);
+  align-items:start;
+  min-height:var(--touch-min);
+  padding:var(--space-12);
+  border:1px solid #dddddd; border-radius:var(--radius-md);
+  background:#fff; cursor:pointer; text-align:left;
+  font-family:var(--font-slack);
+}
+.opcion:hover{ border-color:#1d1c1d66; background:#fafafa; }
+.opcion input{ margin-top:3px; width:16px; height:16px; accent-color:var(--slack-link); }
+.radio-falso{
+  margin-top:3px; width:16px; height:16px; flex:none;
+  border:1px solid #868686; border-radius:var(--radius-full); background:#fff;
+}
+.opcion--elegida .radio-falso{ border:5px solid var(--slack-link); }
+.opcion--elegida{ border-color:var(--slack-link); box-shadow:0 0 0 1px var(--slack-link); background:#f4f9ff; }
+.opcion strong{ display:block; font-size:15px; font-weight:700; }
+.opcion span{ display:block; font-size:13px; color:#616061; line-height:1.45; margin-top:2px; }
+
+.campo-label{ display:block; font-size:15px; font-weight:700; margin:0 0 var(--space-8); }
+.campo-ayuda{ font-size:13px; color:#616061; margin:0 0 var(--space-8); }
+
+.campo-texto{
+  width:100%; min-height:80px; padding:var(--space-8);
+  border:1px solid #bbbabc; border-radius:var(--radius-sm);
+  font:15px/1.46 var(--font-slack); resize:vertical;
+}
+.campo-texto:focus{ outline:0; border-color:#1d1c1d; box-shadow:0 0 0 1px #1d1c1d; }
+.contador{ font-size:12px; color:#616061; text-align:right; margin:var(--space-4) 0 0; }
+
+/* C2 · original → nueva */
+.fecha-cambio{ font-size:15px; line-height:1.5; margin:0 0 var(--space-8); }
+.fc-etiqueta{ color:#454245; }
+.fc-original{ color:#616061; text-decoration:line-through; }
+.fc-flecha{ color:#616061; }
+.fc-nueva{ color:#1d1c1d; font-weight:900; }
+
+/* L-06 · comparación de tres columnas */
+.comparacion{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--space-8);
+  margin:var(--space-8) 0 var(--space-12);
+}
+.comparacion .col{
+  border:1px solid #dddddd; border-radius:var(--radius-sm);
+  padding:var(--space-8);
+}
+.comparacion .col-titulo{ display:block; font-size:12px; color:#616061; margin-bottom:2px; }
+.comparacion .col-valor{ font-size:14px; }
+.comparacion .col-valor--gris{ color:#616061; font-weight:400; text-decoration:line-through; }
+
+/* C6 · Quién ve esto */
+.quien-ve{
+  border:1px solid #dddddd; border-radius:var(--radius-md);
+  padding:var(--space-12); margin:0 0 var(--space-16);
+  background:#fafafa;
+}
+.quien-ve h4{ margin:0 0 var(--space-8); font-size:15px; font-weight:900; }
+.quien-ve .ojo{ margin-right:4px; }
+.qv-listas{ display:grid; gap:var(--space-12); }
+.qv-titulo{ margin:0 0 var(--space-4); font-size:14px; font-weight:700; }
+.qv-lista{ margin:0; padding-left:var(--space-16); font-size:14px; line-height:1.5; color:#1d1c1d; }
+.qv-lista li{ margin-bottom:2px; }
+.qv-lista--ve li::marker{ color:var(--slack-btn-primary); }
+.qv-lista--no li::marker{ color:#616061; }
+
+/* C1 · Consentimiento */
+.consentimiento{
+  border:1px solid var(--slack-warning); border-left-width:4px;
+  border-radius:var(--radius-md);
+  padding:var(--space-12); margin:0 0 var(--space-16);
+  background:#fffaf0;
+}
+.consentimiento h4{ margin:0 0 var(--space-4); font-size:15px; font-weight:900; }
+.consentimiento p{ margin:0 0 var(--space-8); font-size:14px; line-height:1.5; color:#454245; }
+.consentimiento-check{
+  display:flex; gap:var(--space-8); align-items:flex-start;
+  min-height:var(--touch-min); cursor:pointer;
+  font-size:14px; line-height:1.4; font-weight:700;
+}
+.consentimiento-check input{ margin-top:2px; width:18px; height:18px; accent-color:var(--slack-btn-primary); }
+
+/* Resumen de la solicitud (L-04, L-05) */
+.resumen{
+  border:1px solid #dddddd; border-left:4px solid var(--slack-link);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  padding:var(--space-12); margin:0 0 var(--space-16);
+}
+.resumen h4{ margin:0 0 var(--space-8); font-size:15px; font-weight:900; }
+.resumen dl{ margin:0; font-size:15px; }
+.resumen dt{ color:#616061; font-size:13px; margin-top:var(--space-8); }
+.resumen dd{ margin:0; }
+
+/* Errores y validación */
+.error-campo{
+  display:flex; gap:6px; align-items:flex-start;
+  color:#8a1c35; background:var(--red-100);
+  border-radius:var(--radius-sm);
+  padding:var(--space-8); margin:0 0 var(--space-12);
+  font-size:14px; line-height:1.4;
+}
+.error-envio{
+  border:1px solid var(--slack-danger); border-left-width:4px;
+  border-radius:var(--radius-md);
+  padding:var(--space-12); margin:0 0 var(--space-16);
+  background:#fff5f7;
+}
+.error-envio h4{ margin:0 0 var(--space-4); font-size:15px; font-weight:900; color:#8a1c35; }
+.error-envio p{ margin:0; font-size:14px; line-height:1.5; color:#454245; }
+
+/* Pie del panel */
+.panel-pie{
+  display:flex; flex-wrap:wrap; gap:var(--space-8); align-items:center;
+  margin-top:var(--space-16); padding-top:var(--space-12);
+  border-top:1px solid var(--neutral-200);
+}
+.ayuda-boton{ font-size:13px; color:#616061; }
+
+/* Confirmaciones dentro del panel (descartar, cancelar) */
+.confirmacion{
+  border:1px solid #dddddd; border-radius:var(--radius-md);
+  padding:var(--space-16); background:#fff;
+}
+.confirmacion h4{ margin:0 0 var(--space-8); font-size:16px; font-weight:900; }
+.confirmacion p{ margin:0 0 var(--space-12); font-size:15px; line-height:1.5; color:#454245; }
+
+.exito{
+  display:flex; gap:var(--space-8); align-items:flex-start;
+  background:var(--green-100); border-radius:var(--radius-md);
+  padding:var(--space-12); margin:0 0 var(--space-16);
+  font-size:15px; line-height:1.5;
+}
+.exito .glifo{ font-size:18px; line-height:1.2; }
