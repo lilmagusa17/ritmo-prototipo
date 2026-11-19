@@ -1,0 +1,125 @@
+/* RITMO · app móvil. Aquí sí vive la marca violeta (§3).
+   Marco de teléfono 390×844 centrado, con slot para el banner push arriba (C7). */
+
+.movil-escenario{
+  min-height:100%;
+  display:grid;
+  place-items:center;
+  padding:var(--space-24);
+  background:
+    radial-gradient(900px 500px at 50% -10%, var(--violet-100), transparent 70%),
+    var(--neutral-100);
+}
+
+.movil-columna{
+  display:grid;
+  gap:var(--space-12);
+  justify-items:center;
+}
+
+/* Banner push: vive FUERA del marco, como una notificación del sistema (C7) */
+.push{
+  width:390px;
+  min-height:var(--touch-min);
+  display:grid; grid-template-columns:32px 1fr auto; gap:var(--space-12);
+  align-items:center;
+  padding:var(--space-12);
+  background:var(--neutral-0);
+  border:1px solid var(--neutral-200);
+  border-radius:var(--radius-lg);
+  box-shadow:0 8px 24px #211a2e1f;
+  text-align:left;
+  animation:push-entra 220ms ease-out;
+}
+@keyframes push-entra{ from{ opacity:0; transform:translateY(-8px); } to{ opacity:1; transform:none; } }
+.push .icono{
+  width:32px; height:32px; border-radius:var(--radius-sm);
+  background:var(--violet-500); color:#fff;
+  display:grid; place-items:center; font-weight:800; font-size:14px;
+}
+.push strong{ display:block; font-size:14px; }
+.push span{ display:block; color:var(--neutral-600); font-size:13px; }
+.push button{
+  min-width:var(--touch-min); min-height:32px;
+  border:0; background:none; color:var(--neutral-500); font-size:16px;
+  border-radius:var(--radius-sm);
+}
+
+.telefono{
+  width:390px; height:844px;
+  background:var(--neutral-0);
+  border:10px solid #15121c;
+  border-radius:42px;
+  box-shadow:0 24px 60px #211a2e33;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  position:relative;
+}
+
+.telefono .notch{
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:150px; height:26px;
+  background:#15121c;
+  border-radius:0 0 16px 16px;
+  z-index:3;
+}
+
+.status-bar{
+  height:44px; padding:0 var(--space-24) 0 var(--space-24);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:13px; font-weight:600; color:var(--neutral-900);
+  background:var(--neutral-0);
+}
+
+.pantalla-movil{
+  overflow-y:auto;
+  padding:var(--space-16);
+  background:var(--neutral-50);
+  min-height:0;
+}
+
+/* Tabs inferiores: Inicio · Chat · Solicitar · Historial (fase 5) */
+.tabbar{
+  display:grid; grid-template-columns:repeat(4, 1fr);
+  border-top:1px solid var(--neutral-200);
+  background:var(--neutral-0);
+  padding-bottom:var(--space-8);
+}
+.tab{
+  min-height:var(--touch-min);
+  border:0; background:none;
+  display:grid; justify-items:center; gap:2px;
+  padding:var(--space-8) 0 var(--space-4);
+  color:var(--neutral-500); font-size:11px; font-weight:600;
+}
+.tab .glifo{ font-size:18px; line-height:1; }
+.tab[aria-current="page"]{ color:var(--violet-600); }
+
+/* Tarjetas de la app */
+.tarjeta{
+  background:var(--neutral-0);
+  border:1px solid var(--neutral-200);
+  border-radius:var(--radius-lg);
+  padding:var(--space-16);
+  margin-bottom:var(--space-12);
+}
+.tarjeta h3{ margin:0 0 var(--space-4); font-size:16px; }
+.tarjeta p{ margin:0 0 var(--space-12); color:var(--neutral-600); font-size:14px; line-height:1.5; }
+.tarjeta p:last-child{ margin-bottom:0; }
+
+.boton-app{
+  width:100%; min-height:var(--touch-min);
+  border-radius:var(--radius-md);
+  border:1px solid var(--violet-500);
+  background:var(--violet-500); color:#fff;
+  font-size:15px; font-weight:600;
+}
+.boton-app:hover{ background:var(--violet-600); }
+.boton-app--secundario{ background:var(--neutral-0); color:var(--violet-700); }
+.boton-app--secundario:hover{ background:var(--violet-50); }
+
+.movil-ayuda{
+  color:var(--neutral-600); font-size:13px; text-align:center; max-width:390px;
+}
+.movil-ayuda a{ color:var(--violet-700); }
