@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import useChatRitmo from './useChatRitmo.js';
+import { dotPorId } from '../../data/mock.js';
 
 export default function ChatMovil() {
   const { enviar, accion, escribiendo, hilo } = useChatRitmo();
@@ -42,6 +43,12 @@ export default function ChatMovil() {
               {m.attachment && (
                 <div className="adjunto">
                   {m.attachment.titulo && <strong>{m.attachment.titulo}</strong>}
+                  {m.attachment.dot && (
+                    <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className="bolita" style={{ background: dotPorId(m.attachment.dot).color }} aria-hidden="true" />
+                      <strong style={{ display: 'inline' }}>{dotPorId(m.attachment.dot).nombre}</strong>
+                    </p>
+                  )}
                   {m.attachment.fecha && (
                     <p style={{ margin: 0 }}>
                       <span style={{ textDecoration: 'line-through', color: 'var(--neutral-500)' }}>

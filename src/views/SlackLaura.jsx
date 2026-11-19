@@ -10,7 +10,15 @@ import PanelSolicitud from '../flows/solicitud/PanelSolicitud.jsx';
 import PanelMisSolicitudes from '../flows/solicitud/PanelMisSolicitudes.jsx';
 import useChatRitmo from '../flows/chat/useChatRitmo.js';
 import { useStore } from '../store/StoreProvider.jsx';
-import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA, SALTOS_RELOJ, CODIGO_VINCULO } from '../data/mock.js';
+import {
+  AGENDA_HOY,
+  HOY,
+  COMPROMISOS,
+  TAREA_NUEVA,
+  SALTOS_RELOJ,
+  CODIGO_VINCULO,
+  dotPorId,
+} from '../data/mock.js';
 
 const TITULOS_PANEL = {
   'L-02': 'Pedir un ajuste',
@@ -75,6 +83,13 @@ export function MensajeDeStore({ mensaje, onAccion, onChip }) {
       {mensaje.texto && <p>{mensaje.texto}</p>}
       {a && (
         <Attachment titulo={a.titulo} tono={a.tono} pie={a.pie}>
+          {/* C7 · el color del Dot, con su nombre al lado: nunca solo el color */}
+          {a.dot && (
+            <p>
+              <span className="bolita-slack" style={{ background: dotPorId(a.dot).color }} aria-hidden="true" />
+              <strong>{dotPorId(a.dot).nombre}</strong>
+            </p>
+          )}
           {a.fecha && <FechaCambio etiqueta={a.fecha.etiqueta} original={a.fecha.original} nueva={a.fecha.nueva} />}
           {/* L-06 · fecha actual · tu propuesta · propuesta de Miguel (C2) */}
           {a.comparacion && (

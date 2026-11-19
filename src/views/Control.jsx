@@ -13,10 +13,19 @@ const plural = (n, singular, plural_) => `${n} ${n === 1 ? singular : plural_}`;
 
 /* Eventos del reloj que mueven el Dot (C7) */
 const DOT_POR_HORA = {
-  '11:00': { estado: 'reunion', razon: 'empezó tu Reunión con Comercial' },
-  '14:00': { estado: 'concentracion', razon: 'empezó tu bloque de Informe mensual' },
+  '11:00': { estado: 'reunion', razon: 'empezó tu Reunión con Comercial', hasta: '12:00' },
+  '14:00': { estado: 'concentracion', razon: 'empezó tu bloque de Informe mensual', hasta: '16:00' },
   '18:00': { estado: 'apagado', razon: 'terminó tu jornada' },
 };
+
+/* Eventos del Dot que no cuelgan del reloj (C7) */
+const EVENTOS_DOT = [
+  { id: 'foco', texto: 'Empieza bloque de foco', estado: 'concentracion', razon: 'empezó tu bloque de Informe mensual', hasta: '16:00' },
+  { id: 'reunion', texto: 'Empieza reunión', estado: 'reunion', razon: 'empezó tu Reunión con Comercial', hasta: '12:00' },
+  { id: 'pausa', texto: 'Laura toma una pausa', estado: 'recargando', razon: 'tomaste una pausa de 10 minutos' },
+  { id: 'fin-pausa', texto: 'Termina la pausa', estado: 'disponible', razon: 'terminó tu pausa' },
+  { id: 'jornada', texto: 'Fin de la jornada', estado: 'apagado', razon: 'terminó tu jornada' },
+];
 
 export default function Control() {
   const { estado, dispatch } = useStore();
@@ -74,7 +83,7 @@ export default function Control() {
       if (k === 'c') {
         const i = ESTADOS_DOT.findIndex((e) => e.id === estado.dot.estado);
         const sig = ESTADOS_DOT[(i + 1) % ESTADOS_DOT.length];
-        dispatch({ type: 'DOT_SET', estado: sig.id, razon: 'Cambio manual del moderador' });
+        dispatch({ type: 'DOT_SET', estado: sig.id, razon: 'lo cambiaste a mano' });
       }
     };
     window.addEventListener('keydown', alTeclear);
@@ -208,7 +217,7 @@ export default function Control() {
                 <button
                   key={e.id}
                   className={`bmod${estado.dot.estado === e.id ? ' bmod--activo' : ''}`}
-                  onClick={() => dispatch({ type: 'DOT_SET', estado: e.id, razon: 'Cambio manual del moderador' })}
+                  onClick={() => dispatch({ type: 'DOT_SET', estado: e.id, razon: 'lo cambiaste a mano' })}
                 >
                   <span className="punto-grande" style={{ background: e.color }} aria-hidden="true" />
                   {e.nombre}
@@ -217,6 +226,19 @@ export default function Control() {
               <button className="bmod" title="Siguiente color">
                 <span className="kbd">C</span>
               </button>
+            </div>
+            {/* Cada evento dispara las tres señales de C7 a la vez */}
+            <div className="fila" style={{ marginBottom: 'var(--space-12)' }}>
+              {EVENTOS_DOT.map((e) => (
+                <button
+                  key={e.id}
+                  className="bmod"
+                  onClick={() => dispatch({ type: 'DOT_SET', estado: e.estado, razon: e.razon, hasta: e.hasta })}
+                >
+                  <span className="punto-grande" style={{ background: dotPorId(e.estado).color }} aria-hidden="true" />
+                  {e.texto}
+                </button>
+              ))}
             </div>
             <div className="fila">
               <label className="interruptor">

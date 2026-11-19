@@ -32,6 +32,7 @@ export const estadoInicial = () => ({
   dot: {
     estado: 'disponible',
     razon: '',
+    hasta: null,                 // hora hasta la que RITMO ofrece mantener el color (L-11)
     mostrarNombreEnSlack: false, // "Solo la luz" vs "Luz + nombre en Slack" (C5)
     mostrarNombreEnDot: true,    // toggle del moderador para la vista #/dot
   },

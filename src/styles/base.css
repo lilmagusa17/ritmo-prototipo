@@ -85,3 +85,39 @@
 .placeholder .pantalla{ color:var(--neutral-500); font-size:13px; margin:0 0 var(--space-24); }
 .placeholder .volver{ color:var(--violet-700); font-size:14px; }
 .placeholder ul{ color:var(--neutral-600); font-size:14px; line-height:1.7; }
+
+/* ---------- RITMO Dot a pantalla completa (#/dot · C7) ---------- */
+.dot-escenario{
+  height:100%;
+  display:grid; place-items:center; align-content:center; gap:var(--space-24);
+  background:#17141d;
+  cursor:pointer;
+}
+.dot-caja{ position:relative; display:grid; place-items:center; }
+.dot-circulo{
+  width:60vmin; height:60vmin;
+  border-radius:var(--radius-full);
+  transition:background 400ms ease, box-shadow 400ms ease;
+}
+/* Pulso: un anillo que crece una vez en cada cambio de estado */
+.dot-pulso{
+  position:absolute; inset:0; margin:auto;
+  width:60vmin; height:60vmin;
+  border-radius:var(--radius-full);
+  border:2px solid;
+  opacity:0;
+  animation:dot-pulso 900ms ease-out 1;
+}
+@keyframes dot-pulso{
+  0%{ transform:scale(1); opacity:.9; }
+  100%{ transform:scale(1.35); opacity:0; }
+}
+.dot-nombre{
+  margin:0;
+  color:#ffffff99; font:500 13px var(--font-ritmo);
+  letter-spacing:.08em;
+}
+@media (prefers-reduced-motion:reduce){
+  .dot-pulso{ animation:none; }
+  .dot-circulo{ transition:none; }
+}

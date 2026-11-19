@@ -7,6 +7,7 @@
 import { useCallback } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { detectarIntencion, responder } from '../../data/intents.js';
+import { ESTADOS_DOT, dotPorId } from '../../data/mock.js';
 
 const DEMORA_MIN = 600;
 const DEMORA_MAX = 900;
@@ -74,8 +75,50 @@ export default function useChatRitmo() {
         return;
       }
 
+      /* L-11b · Laura mantiene el color que RITMO propuso */
+      if (accionId === 'mantener-dot') {
+        const info = dotPorId(estado.dot.estado);
+        const hasta = estado.dot.hasta;
+        dispatch({
+          type: 'CHAT_PUSH',
+          mensaje: {
+            de: 'ritmo',
+            at: estado.reloj,
+            texto: hasta
+              ? `Listo, lo dejo en ${info.nombre} hasta las ${hasta}.`
+              : `Listo, lo dejo en ${info.nombre}.`,
+            attachment: {
+              titulo: 'Tu RITMO Dot',
+              pie: 'Tu equipo solo ve el color, no la razón.',
+              dot: estado.dot.estado,
+              acciones: [{ id: 'cambiar-color-dot', texto: 'Cambiar color' }],
+            },
+          },
+        });
+        return;
+      }
+
+      /* L-11c · Laura elige otro color a mano */
+      if (accionId === 'cambiar-color-dot') {
+        dispatch({
+          type: 'CHAT_PUSH',
+          mensaje: {
+            de: 'ritmo',
+            at: estado.reloj,
+            texto: '¿De qué color lo pongo?',
+            attachment: {
+              titulo: 'Cambiar el color',
+              pie: 'Tu equipo solo ve el color, no la razón.',
+              acciones: ESTADOS_DOT.map((e) => ({ id: `dot-${e.id}`, texto: e.nombre })),
+            },
+          },
+        });
+        return;
+      }
+
       if (accionId.startsWith('dot-')) {
         const estadoDot = accionId.replace('dot-', '');
+        if (estadoDot === estado.dot.estado) return; // ya está en ese color
         dispatch({
           type: 'DOT_SET',
           estado: estadoDot,
@@ -97,7 +140,7 @@ export default function useChatRitmo() {
         });
       }
     },
-    [dispatch, enviar, estado.reloj, estado.solicitudes],
+    [dispatch, enviar, estado.reloj, estado.solicitudes, estado.dot],
   );
 
   return { enviar, accion, escribiendo: estado.ritmoEscribiendo, hilo: estado.chat };

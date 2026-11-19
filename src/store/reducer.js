@@ -55,12 +55,55 @@ export function reducer(estado, accion) {
     case 'LOG':
       return anotar(estado, accion.texto);
 
-    /* ---------- RITMO Dot (C7) ---------- */
+    /* ---------- RITMO Dot (C7) ----------
+       Un solo cambio produce las tres señales a la vez:
+       1. la vista #/dot cambia de color (lee estado.dot)
+       2. RITMO avisa en el DM de Laura con el patrón L-11 y sus botones
+       3. el teléfono muestra el banner push y actualiza la tarjeta de APP-04 */
     case 'DOT_SET': {
       const info = dotPorId(accion.estado);
+      const hasta = accion.hasta || null;
+
+      const pregunta =
+        accion.estado === 'apagado'
+          ? 'Tu equipo ya no ve ningún color.'
+          : hasta
+            ? `¿Lo mantengo así hasta las ${hasta}?`
+            : '';
+
+      const acciones =
+        accion.estado === 'apagado'
+          ? [{ id: 'dot-disponible', texto: 'Volver a Disponible', variante: 'primario' }]
+          : accion.estado === 'recargando'
+            ? [
+                { id: 'dot-disponible', texto: 'Terminé la pausa', variante: 'primario' },
+                { id: 'cambiar-color-dot', texto: 'Cambiar color' },
+              ]
+            : [
+                { id: 'mantener-dot', texto: 'Sí, mantener', variante: 'primario' },
+                { id: 'cambiar-color-dot', texto: 'Cambiar color' },
+                { id: 'dot-apagado', texto: 'Apagar' },
+              ];
+
       const base = {
         ...estado,
-        dot: { ...estado.dot, estado: accion.estado, razon: accion.razon || '' },
+        dot: { ...estado.dot, estado: accion.estado, razon: accion.razon || '', hasta },
+        chat: [
+          ...estado.chat,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            texto: `Tu Dot pasó a ${info.nombre}${accion.razon ? ` porque ${accion.razon}` : ''}. ${pregunta}`.trim(),
+            attachment: {
+              titulo: 'Tu RITMO Dot',
+              pie: 'Tu equipo solo ve el color, no la razón.',
+              dot: accion.estado,
+              lineas: hasta ? [`Hasta las ${hasta}, salvo que lo cambies tú.`] : [],
+              acciones,
+            },
+          },
+        ],
         notificaciones: [
           ...estado.notificaciones,
           { id: nuevoId('notif'), titulo: `Tu Dot pasó a ${info.nombre}`, cuerpo: accion.razon || '', at: estado.reloj },
@@ -241,6 +284,7 @@ export function reducer(estado, accion) {
           type: 'DOT_SET',
           estado: 'concentracion',
           razon: 'Miguel aceptó proteger tu tiempo de foco',
+          hasta: '16:00',
         });
       }
 
