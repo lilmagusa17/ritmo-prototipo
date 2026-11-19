@@ -5,10 +5,11 @@
 import { useState } from 'react';
 import SlackShell from '../components/SlackShell.jsx';
 import { Mensaje, Attachment, Acciones, BotonSlack, DiaSeparador } from '../components/Mensaje.jsx';
-import FechaCambio from '../components/FechaCambio.jsx';
+import FechaCambio, { ComparacionTres } from '../components/FechaCambio.jsx';
 import PanelSolicitud from '../flows/solicitud/PanelSolicitud.jsx';
+import PanelMisSolicitudes from '../flows/solicitud/PanelMisSolicitudes.jsx';
 import { useStore } from '../store/StoreProvider.jsx';
-import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA } from '../data/mock.js';
+import { AGENDA_HOY, HOY, COMPROMISOS, TAREA_NUEVA, SALTOS_RELOJ } from '../data/mock.js';
 
 const TITULOS_PANEL = {
   'L-02': 'Pedir un ajuste',
@@ -16,7 +17,17 @@ const TITULOS_PANEL = {
   'L-03c': 'Descartar solicitud',
   'L-04': 'Revisar antes de enviar',
   'L-05': 'Solicitud enviada',
+  'L-08': 'Mis solicitudes',
+  'L-08c': 'Mi solicitud',
+  'L-08d': 'Solicitud cancelada',
+  'L-09': 'Cancelar solicitud',
+  'L-09b': 'Miguel ya respondió',
 };
+
+/* Las pantallas de "Mis solicitudes" usan otro panel */
+const PANTALLAS_MIS = ['L-08', 'L-08c', 'L-08d', 'L-09', 'L-09b'];
+
+const horaIndice = (hora) => SALTOS_RELOJ.findIndex((s) => s.hora === hora);
 
 function ComposerLaura() {
   const [texto, setTexto] = useState('');
@@ -44,7 +55,7 @@ function ComposerLaura() {
 }
 
 /* Mensajes que vienen del store (envíos, respuestas de Miguel, chat de la fase 4) */
-function MensajeDeStore({ mensaje }) {
+function MensajeDeStore({ mensaje, onAccion }) {
   const a = mensaje.attachment;
   return (
     <Mensaje autor={mensaje.de} hora={mensaje.at}>
@@ -52,10 +63,27 @@ function MensajeDeStore({ mensaje }) {
       {a && (
         <Attachment titulo={a.titulo} tono={a.tono} pie={a.pie}>
           {a.fecha && <FechaCambio etiqueta={a.fecha.etiqueta} original={a.fecha.original} nueva={a.fecha.nueva} />}
+          {/* L-06 · fecha actual · tu propuesta · propuesta de Miguel (C2) */}
+          {a.comparacion && (
+            <ComparacionTres
+              actual={a.comparacion.actual}
+              tuya={a.comparacion.tuya}
+              deMiguel={a.comparacion.deMiguel}
+            />
+          )}
           {(a.lineas || []).map((l) => (
             <p key={l}>{l}</p>
           ))}
         </Attachment>
+      )}
+      {a?.acciones && (
+        <Acciones>
+          {a.acciones.map((b) => (
+            <BotonSlack key={b.id} variante={b.variante} onClick={() => onAccion(b.id, a.solicitudId)}>
+              {b.texto}
+            </BotonSlack>
+          ))}
+        </Acciones>
       )}
     </Mensaje>
   );
@@ -83,8 +111,25 @@ export default function SlackLaura() {
 
   const abrirSolicitud = () => {
     dispatch({ type: 'BORRADOR_SET', borrador: { tipo: null } });
-    dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-02', lado: 'laura' });
+    dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-02', lado: 'laura', solicitudId: null });
   };
+
+  const abrirMisSolicitudes = () =>
+    dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-08', lado: 'laura', solicitudId: null });
+
+  /* Botones que vienen dentro de un mensaje (L-06: aceptar o rechazar la alternativa) */
+  const accionDeMensaje = (accionId, solicitudId) => {
+    if (accionId === 'aceptar-alternativa') {
+      dispatch({ type: 'LAURA_RESUELVE_ALTERNATIVA', id: solicitudId, acepta: true });
+    }
+    if (accionId === 'rechazar-alternativa') {
+      dispatch({ type: 'LAURA_RESUELVE_ALTERNATIVA', id: solicitudId, acepta: false });
+    }
+  };
+
+  const pendientes = estado.solicitudes.filter((s) => s.estado === 'pendiente');
+  const hayRecordatorio = pendientes.length > 0 && horaIndice(estado.reloj) >= horaIndice('12:24');
+  const esMisSolicitudes = PANTALLAS_MIS.includes(estado.panel.pantalla);
 
   return (
     <SlackShell
@@ -92,7 +137,7 @@ export default function SlackLaura() {
       conversacion={conv}
       onConversacion={setConv}
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Pedir un ajuste'}
-      panel={<PanelSolicitud />}
+      panel={esMisSolicitudes ? <PanelMisSolicitudes /> : <PanelSolicitud />}
       composer={esRitmo ? <ComposerLaura /> : null}
     >
       {esRitmo ? (
@@ -116,6 +161,7 @@ export default function SlackLaura() {
             </Attachment>
             <Acciones>
               <BotonSlack onClick={abrirSolicitud}>Pedir un ajuste</BotonSlack>
+              <BotonSlack onClick={abrirMisSolicitudes}>Ver mis solicitudes</BotonSlack>
             </Acciones>
           </Mensaje>
 
@@ -172,10 +218,33 @@ export default function SlackLaura() {
             </Mensaje>
           )}
 
-          {/* Mensajes que produce el flujo (envíos, y en la fase 3 las respuestas de Miguel) */}
+          {/* Mensajes del flujo: envíos (L-05), respuestas de Miguel (L-06, L-07x) */}
           {estado.chat.map((m) => (
-            <MensajeDeStore key={m.id} mensaje={m} />
+            <MensajeDeStore key={m.id} mensaje={m} onAccion={accionDeMensaje} />
           ))}
+
+          {/* L-05b · sigue pendiente a las 12:24 */}
+          {hayRecordatorio && (
+            <Mensaje hora="12:24">
+              <p>
+                {pendientes.length === 1 ? 'Tu solicitud lleva' : `Tus ${pendientes.length} solicitudes llevan`} 2 horas
+                sin respuesta.
+              </p>
+              <Attachment titulo="Sigue pendiente" tono="ambar" pie="Tu agenda no ha cambiado.">
+                {pendientes.map((s) => (
+                  <FechaCambio
+                    key={s.id}
+                    etiqueta={s.compromiso}
+                    original={s.fechaOriginal}
+                    nueva={s.propuesta}
+                  />
+                ))}
+              </Attachment>
+              <Acciones>
+                <BotonSlack onClick={abrirMisSolicitudes}>Ver mis solicitudes</BotonSlack>
+              </Acciones>
+            </Mensaje>
+          )}
         </>
       ) : (
         <CanalDemo nombre={conv.id} />

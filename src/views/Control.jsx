@@ -23,6 +23,7 @@ export default function Control() {
   const dot = dotPorId(estado.dot.estado);
   const pendientes = pendientesDeMiguel(estado);
   const primeraPendiente = pendientes[0] || null;
+  const hayAlternativa = estado.solicitudes.some((s) => s.estado === 'alternativa');
 
   const irAHora = useCallback(
     (hora, nota) => {
@@ -36,24 +37,26 @@ export default function Control() {
 
   const responderComoMiguel = (tipo) => {
     if (!primeraPendiente) return;
-    const mapa = {
-      aceptar: { estado: 'aceptada', texto: 'Miguel aceptó la solicitud' },
-      alternativa: { estado: 'alternativa', texto: 'Miguel propuso una alternativa' },
-      rechazar: { estado: 'rechazada', texto: 'Miguel no pudo aceptar' },
+    const alternativas = {
+      plazo: 'martes 17 nov',
+      prioridad: 'Partir el informe en dos entregas',
+      foco: 'Hoy 14:00-15:00 sin reuniones',
+      redistribuir: 'Camila apoya con los datos',
     };
-    const m = mapa[tipo];
     dispatch({
-      type: 'SOLICITUD_ESTADO',
+      type: 'MIGUEL_RESPONDE',
       id: primeraPendiente.id,
-      estado: m.estado,
-      actor: 'miguel',
-      accionTexto: m.texto,
-      datos: tipo === 'alternativa' ? { alternativaMiguel: 'miércoles 18 nov' } : {},
+      respuesta: tipo,
+      alternativa: tipo === 'alternativa' ? alternativas[primeraPendiente.tipo] : undefined,
+      razon: tipo === 'rechazar' ? 'El equipo depende de esa fecha' : undefined,
     });
-    // Un acuerdo de "proteger tiempo de foco" mueve el Dot (C7)
-    if (tipo === 'aceptar' && primeraPendiente.tipo === 'foco') {
-      dispatch({ type: 'DOT_SET', estado: 'concentracion', razon: 'Miguel aceptó proteger tu tiempo de foco' });
-    }
+  };
+
+  /* Laura responde a una alternativa, por si se modera también su lado */
+  const resolverAlternativa = (acepta) => {
+    const conAlternativa = estado.solicitudes.find((s) => s.estado === 'alternativa');
+    if (!conAlternativa) return;
+    dispatch({ type: 'LAURA_RESUELVE_ALTERNATIVA', id: conAlternativa.id, acepta });
   };
 
   /* Atajos de teclado, como extra de los botones (§6) */
@@ -165,6 +168,15 @@ export default function Control() {
                 ? `Responde a: ${primeraPendiente.compromiso} · ${primeraPendiente.tipoTitulo}`
                 : 'Sin solicitudes pendientes. Carga el historial de ejemplo o envía una desde Laura.'}
             </p>
+
+            <div className="fila" style={{ marginBottom: 'var(--space-12)' }}>
+              <button className="bmod" disabled={!hayAlternativa} onClick={() => resolverAlternativa(true)}>
+                Laura acepta la alternativa
+              </button>
+              <button className="bmod" disabled={!hayAlternativa} onClick={() => resolverAlternativa(false)}>
+                Laura la rechaza
+              </button>
+            </div>
 
             <div className="fila">
               <label className="interruptor">

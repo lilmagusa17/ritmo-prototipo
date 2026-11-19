@@ -30,6 +30,7 @@ export const estadoInicial = () => ({
 
   /* Chat de RITMO con Laura. El mismo hilo se ve en Slack y en la pestaña Chat del móvil (C4). */
   chat: [],
+  chatMiguel: [],
   ritmoEscribiendo: false,
 
   /* Aviso de choque (L-01) */

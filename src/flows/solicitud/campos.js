@@ -101,3 +101,36 @@ export function armarSolicitud(borrador) {
     consentimiento: true,
   };
 }
+
+/* Alternativas que puede proponer Miguel (M-03), por tipo de ajuste.
+   "Sin fecha por ahora" es la variante M-03 sin fecha: Miguel no se compromete todavía. */
+export const ALTERNATIVAS = {
+  plazo: [
+    { id: 'vie-13', titulo: 'viernes 13 nov', detalle: 'Un día más, no dos' },
+    { id: 'mar-17', titulo: 'martes 17 nov', detalle: 'Después de la presentación a cliente' },
+    { id: 'sin-fecha', titulo: 'Sin fecha por ahora', detalle: 'Lo definimos en el 1:1 de hoy a las 16:30' },
+  ],
+  prioridad: [
+    { id: 'reporte-primero', titulo: `Primero ${TAREA_NUEVA.titulo}`, detalle: 'El informe se entrega después' },
+    { id: 'partir', titulo: 'Partir el informe en dos entregas', detalle: 'Avance el jueves, final el lunes' },
+    { id: 'sin-fecha', titulo: 'Sin definir por ahora', detalle: 'Lo hablamos en el 1:1 de hoy' },
+  ],
+  foco: [
+    { id: 'una-hora', titulo: 'Hoy 14:00–15:00 sin reuniones', detalle: 'Una hora en vez de dos' },
+    { id: 'manana', titulo: 'Mañana 9:00–11:00 sin reuniones', detalle: 'Hoy no se puede mover la agenda' },
+    { id: 'sin-fecha', titulo: 'Sin bloque fijo por ahora', detalle: 'Lo revisamos en el 1:1' },
+  ],
+  redistribuir: [
+    { id: 'camila', titulo: 'Camila apoya con los datos', detalle: 'Ella ya tiene el acceso' },
+    { id: 'parcial', titulo: 'Apoyo solo en la revisión final', detalle: 'El resto queda contigo' },
+    { id: 'sin-fecha', titulo: 'Sin apoyo asignado por ahora', detalle: 'Lo vemos en el 1:1' },
+  ],
+};
+
+/* Razones de rechazo (M-04). "Otra razón" abre un campo de texto. */
+export const RAZONES_RECHAZO = [
+  { id: 'cliente', texto: 'Hay un compromiso con el cliente' },
+  { id: 'equipo', texto: 'El equipo depende de esa fecha' },
+  { id: 'nadie', texto: 'No puedo reasignar a nadie ahora' },
+  { id: 'otra', texto: 'Otra razón' },
+];

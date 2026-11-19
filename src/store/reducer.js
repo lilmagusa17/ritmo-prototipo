@@ -80,7 +80,15 @@ export function reducer(estado, accion) {
 
     /* ---------- Panel derecho de Slack ---------- */
     case 'PANEL_ABRIR':
-      return { ...estado, panel: { abierto: true, pantalla: accion.pantalla, lado: accion.lado || 'laura' } };
+      return {
+        ...estado,
+        panel: {
+          abierto: true,
+          pantalla: accion.pantalla,
+          lado: accion.lado || 'laura',
+          solicitudId: accion.solicitudId ?? estado.panel.solicitudId ?? null,
+        },
+      };
 
     case 'PANEL_CERRAR':
       return { ...estado, panel: { abierto: false, pantalla: null, lado: null } };
@@ -135,6 +143,170 @@ export function reducer(estado, accion) {
         },
         accion.accionTexto || `Solicitud → ${accion.estado}`,
       );
+
+    /* Miguel responde (§7). La misma acción mueve la solicitud, avisa a Laura en su chat,
+       deja constancia en el de Miguel y, si aplica, mueve el Dot (C7). */
+    case 'MIGUEL_RESPONDE': {
+      const sol = estado.solicitudes.find((s) => s.id === accion.id);
+      if (!sol) return estado;
+
+      const nuevoEstado =
+        accion.respuesta === 'aceptar' ? 'aceptada' : accion.respuesta === 'alternativa' ? 'alternativa' : 'rechazada';
+
+      const textoHistorial =
+        accion.respuesta === 'aceptar'
+          ? 'Miguel aceptó tu propuesta'
+          : accion.respuesta === 'alternativa'
+            ? 'Miguel propuso una alternativa'
+            : 'Miguel no pudo aceptar';
+
+      const solActualizada = {
+        ...sol,
+        estado: nuevoEstado,
+        alternativaMiguel: accion.alternativa || sol.alternativaMiguel || null,
+        razonRechazo: accion.razon || null,
+        historial: [...(sol.historial || []), { at: estado.reloj, actor: 'miguel', accion: textoHistorial }],
+      };
+
+      /* Mensaje para Laura: L-07c aceptada · L-06 alternativa · L-07b sin acuerdo */
+      const paraLaura =
+        accion.respuesta === 'aceptar'
+          ? {
+              texto: 'Miguel aceptó tu solicitud.',
+              attachment: {
+                titulo: 'Ajuste aceptado',
+                tono: 'verde',
+                fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.propuesta },
+                lineas: ['Queda como lo propusiste.'],
+              },
+            }
+          : accion.respuesta === 'alternativa'
+            ? {
+                texto: 'Miguel propuso algo distinto.',
+                attachment: {
+                  titulo: 'Alternativa de Miguel',
+                  tono: 'azul',
+                  comparacion: {
+                    actual: sol.fechaOriginal,
+                    tuya: sol.propuesta,
+                    deMiguel: accion.alternativa,
+                  },
+                  acciones: [
+                    { id: 'aceptar-alternativa', texto: 'Aceptar la alternativa', variante: 'primario' },
+                    { id: 'rechazar-alternativa', texto: 'No me sirve' },
+                  ],
+                  solicitudId: sol.id,
+                },
+              }
+            : {
+                texto: 'Miguel no pudo aceptar el ajuste.',
+                attachment: {
+                  titulo: 'Sin acuerdo',
+                  tono: 'rojo',
+                  fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
+                  lineas: [accion.razon ? `Razón: ${accion.razon}` : 'Miguel no dejó una razón.'],
+                },
+              };
+
+      let siguiente = {
+        ...estado,
+        solicitudes: estado.solicitudes.map((s) => (s.id === sol.id ? solActualizada : s)),
+        chat: [...estado.chat, { id: nuevoId('msg'), de: 'ritmo', at: estado.reloj, ...paraLaura }],
+        chatMiguel: [
+          ...estado.chatMiguel,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            texto:
+              accion.respuesta === 'aceptar'
+                ? `Le avisé a Laura que aceptaste: ${sol.compromiso}.`
+                : accion.respuesta === 'alternativa'
+                  ? 'Le mandé tu alternativa a Laura. Te aviso cuando responda.'
+                  : 'Le avisé a Laura que no pudiste aceptar.',
+          },
+        ],
+      };
+
+      // C7: un acuerdo de "proteger tiempo de foco" mueve el Dot
+      if (accion.respuesta === 'aceptar' && sol.tipo === 'foco') {
+        siguiente = reducer(siguiente, {
+          type: 'DOT_SET',
+          estado: 'concentracion',
+          razon: 'Miguel aceptó proteger tu tiempo de foco',
+        });
+      }
+
+      return anotar(siguiente, `Miguel respondió: ${textoHistorial.toLowerCase()}`);
+    }
+
+    /* Laura responde a la alternativa: L-07 acordada · L-07d sin acuerdo */
+    case 'LAURA_RESUELVE_ALTERNATIVA': {
+      const sol = estado.solicitudes.find((s) => s.id === accion.id);
+      if (!sol) return estado;
+
+      const nuevoEstado = accion.acepta ? 'acordada' : 'rechazo_alt';
+      const solActualizada = {
+        ...sol,
+        estado: nuevoEstado,
+        historial: [
+          ...(sol.historial || []),
+          {
+            at: estado.reloj,
+            actor: 'laura',
+            accion: accion.acepta ? 'Aceptaste la alternativa' : 'Dijiste que la alternativa no te sirve',
+          },
+        ],
+      };
+
+      let siguiente = {
+        ...estado,
+        solicitudes: estado.solicitudes.map((s) => (s.id === sol.id ? solActualizada : s)),
+        chat: [
+          ...estado.chat,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            texto: accion.acepta ? 'Listo, quedó acordado con Miguel.' : 'Listo. Le avisé que la alternativa no te sirve.',
+            attachment: accion.acepta
+              ? {
+                  titulo: 'Acuerdo',
+                  tono: 'verde',
+                  fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.alternativaMiguel },
+                  lineas: ['Es lo que queda en firme.'],
+                }
+              : {
+                  titulo: 'Sin acuerdo',
+                  tono: 'rojo',
+                  fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
+                  lineas: ['Nada cambió. Puedes volver a pedir un ajuste cuando quieras.'],
+                },
+          },
+        ],
+        chatMiguel: [
+          ...estado.chatMiguel,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            texto: accion.acepta
+              ? `Laura aceptó tu alternativa: ${sol.compromiso} · ${sol.alternativaMiguel}.`
+              : 'Laura dice que tu alternativa no le sirve. No hubo acuerdo.',
+          },
+        ],
+      };
+
+      if (accion.acepta && sol.tipo === 'foco') {
+        siguiente = reducer(siguiente, {
+          type: 'DOT_SET',
+          estado: 'concentracion',
+          razon: 'Acordaste con Miguel proteger tu tiempo de foco',
+        });
+      }
+
+      return anotar(siguiente, accion.acepta ? 'Laura aceptó la alternativa · acordada' : 'Laura rechazó la alternativa');
+    }
 
     /* C3: cancelar la quita de la bandeja de Miguel. No queda estado "cancelada" visible para él. */
     case 'SOLICITUD_CANCELAR':
