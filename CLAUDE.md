@@ -77,7 +77,7 @@ Regla de marca: **dentro de Slack, los mensajes de RITMO usan estilo nativo de S
 - Agenda de Laura hoy: 9:30 Daily (15 min) · 11:00 Reunión con Comercial · 14:00–16:00 Bloque de foco: Informe mensual · 16:30 1:1 con Miguel.
 - Compromisos de Laura: **Informe mensual** (entrega jue 12 nov), Plan trimestral, Presentación a cliente, Cierre de inventario, Plan de capacitación.
 - Tarea nueva que dispara el aviso: **Reporte de ventas para Comercial** (entrega jue 12 nov) → choca con Informe mensual.
-- Historial de solicitudes (para "Mis solicitudes" / APP-07): 10 nov Informe mensual · Modificar plazo · Pendiente; 3 nov Plan trimestral · Reorganizar prioridad · Acordada; 28 oct Proteger tiempo de foco · Sin acuerdo. *(Quita la fila "Cancelada" de 20 oct — ver corrección 3.)*
+- Historial de solicitudes (para "Mis solicitudes" / APP-07): 9 nov Plan de capacitación · Modificar plazo (vie 4 dic → vie 11 dic) · Pendiente; 9 nov Cierre de inventario · Redistribuir carga · Pendiente; 3 nov Plan trimestral · Reorganizar prioridad · Acordada; 28 oct Proteger tiempo de foco · Sin acuerdo. *(Quita la fila "Cancelada" de 20 oct — ver corrección 3.)* Las dos pendientes del 9 nov son las que el protocolo de prueba v2 usa para cancelar (T6) y rechazar (T7); ninguna toca el Informe mensual, que es el de la solicitud creada en vivo.
 
 ---
 

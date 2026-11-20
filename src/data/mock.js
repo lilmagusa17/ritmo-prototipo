@@ -119,20 +119,40 @@ export const ESTADOS_DOT = [
 export const dotPorId = (id) => ESTADOS_DOT.find((e) => e.id === id) || ESTADOS_DOT[0];
 
 /* Historial de ejemplo para "Mis solicitudes" / APP-07.
-   C3: sin la fila "Cancelada" del 20 oct. */
+   C3: sin la fila "Cancelada" del 20 oct.
+
+   Las dos pendientes del 9 nov son las del protocolo v2: T6 cancela el Plan de
+   capacitación y T7 rechaza el Cierre de inventario. Ninguna toca el Informe
+   mensual, que es el compromiso de la solicitud que Laura crea en vivo en T2. */
 export const HISTORIAL_EJEMPLO = [
   {
-    id: 'sol-hist-1',
-    fecha: '10 nov',
+    id: 'sol-hist-capacitacion',
+    fecha: '9 nov',
     tipo: 'plazo',
     tipoTitulo: 'Modificar plazo',
-    compromiso: 'Informe mensual',
-    fechaOriginal: 'jueves 12 nov',
-    propuesta: 'lunes 16 nov',
+    compromiso: 'Plan de capacitación',
+    fechaOriginal: 'viernes 4 dic',
+    propuesta: 'viernes 11 dic',
     estado: 'pendiente',
     nota: '',
     consentimiento: true,
-    historial: [{ at: '10 nov 10:20', actor: 'laura', accion: 'Enviaste la solicitud' }],
+    historial: [{ at: '9 nov 16:40', actor: 'laura', accion: 'Enviaste la solicitud' }],
+  },
+  {
+    /* "Redistribuir carga" no mueve una fecha: su "original" es la carga, no el día
+       (CONFIG_TIPO.redistribuir en campos.js). La entrega del 27 nov va en la misma
+       línea para que la comparación original → nueva siga leyéndose (C2). */
+    id: 'sol-hist-inventario',
+    fecha: '9 nov',
+    tipo: 'redistribuir',
+    tipoTitulo: 'Redistribuir carga',
+    compromiso: 'Cierre de inventario',
+    fechaOriginal: 'Todo el conteo a tu cargo · entrega viernes 27 nov',
+    propuesta: 'Apoyo con el conteo de bodega',
+    estado: 'pendiente',
+    nota: '',
+    consentimiento: true,
+    historial: [{ at: '9 nov 16:40', actor: 'laura', accion: 'Enviaste la solicitud' }],
   },
   {
     id: 'sol-hist-2',
