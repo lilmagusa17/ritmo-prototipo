@@ -1,5 +1,21 @@
 # RITMO · Plan de despliegue (ágil y sencillo)
 
+> **Hecho: D0, D1 y D2.** El prototipo está en
+> **https://lilmagusa17.github.io/ritmo-prototipo/** (repositorio público
+> `lilmagusa17/ritmo-prototipo`, rama `main`). Cada push a `main` lo vuelve a publicar con la Action
+> `.github/workflows/pages.yml`; no hay que tocar nada a mano.
+>
+> Rutas para la sesión:
+> `…/#/slack/laura` · `…/#/slack/miguel` · `…/#/app` · `…/#/dot` · `…/#/control`
+>
+> Verificado en esa URL: las fuentes de Google cargan, las cinco vistas abren, dos pestañas se sincronizan,
+> T3 (aviso → consentimiento → envío, con el botón bloqueado hasta marcar la casilla) y T6 (evento del Dot con sus
+> tres señales) pasan, y `Reset total` deja el escenario en 9:00 con el onboarding desde cero.
+>
+> Se decidió **GitHub Pages** en vez de Netlify Drop (camino A del plan original) porque la URL es estable, no
+> caduca a las 24 h y no exige iniciar sesión al participante. El mismo build quedó además como artifact privado de
+> respaldo: https://claude.ai/artifact/EoWbMWvCYVy7E7SMFWDJYY (solo lo abre quien tenga acceso a tu cuenta de Claude).
+
 > Objetivo: que la sesión de pruebas no dependa de `npm run dev` en tu computador. El prototipo queda en una URL
 > que se abre en cualquier navegador, con las cinco vistas en sus hash: `#/slack/laura`, `#/slack/miguel`, `#/app`,
 > `#/dot`, `#/control`.
@@ -139,3 +155,21 @@ El despliegue cambia *de dónde* sale el prototipo, no cómo se monta:
 
 Si el tiempo aprieta: se cortan **D4**, luego **D3**. **D2 no se corta** — un prototipo que se ve raro en la red del
 salón hace perder la sesión completa, y eso solo se descubre probando ahí.
+
+
+---
+
+## 6. Cómo republicar
+
+```bash
+git add -A && git commit -m "ajuste de copy" && git push
+```
+
+La Action construye y publica en 1–2 minutos. Para verla: `gh run watch` o la pestaña Actions del repositorio.
+Si alguna vez falla el despliegue y la sesión es en minutos, el plan B sigue siendo local:
+
+```bash
+npm run build && npm run preview
+```
+
+y moderar en `http://localhost:4173` con el mismo montaje de ventanas.
