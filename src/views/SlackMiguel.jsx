@@ -192,7 +192,7 @@ export default function SlackMiguel() {
 
           {/* M-01 · una tarjeta por solicitud */}
           {lista.map((s) => {
-            const etiqueta = ETIQUETAS_ESTADO[s.estado];
+            const etiqueta = ETIQUETAS_ESTADO_MIGUEL[s.estado] || ETIQUETAS_ESTADO[s.estado];
             const pendiente = s.estado === 'pendiente';
             return (
               <Mensaje key={s.id} hora={s.historial?.[0]?.at || estado.reloj}>

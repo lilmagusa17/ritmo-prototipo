@@ -71,6 +71,19 @@ export default function useChatRitmo() {
         return;
       }
 
+      /* Botones del aviso de choque (L-01) */
+      if (accionId === 'pedir-ajuste-aviso') {
+        dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'atendido' });
+        dispatch({ type: 'BORRADOR_SET', borrador: { tipo: null } });
+        dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-02', lado: 'laura', solicitudId: null });
+        return;
+      }
+
+      if (accionId === 'aviso-ahora-no') {
+        dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'postergado' });
+        return;
+      }
+
       if (accionId === 'abrir-solicitud') {
         dispatch({ type: 'BORRADOR_SET', borrador: { tipo: null } });
         dispatch({ type: 'PANEL_ABRIR', pantalla: 'L-02', lado: 'laura', solicitudId: null });

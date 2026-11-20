@@ -353,59 +353,6 @@ export default function SlackLaura() {
           </Mensaje>
 
           {/* L-01 · aviso de choque */}
-          {estado.avisoChoque === 'visible' && (
-            <Mensaje hora="10:12">
-              <p>
-                Llegó <strong>{TAREA_NUEVA.titulo}</strong> ({TAREA_NUEVA.fecha}), que pidió {TAREA_NUEVA.pedidaPor}.
-                Se cruza con {informe.titulo}, también para el jueves.
-              </p>
-              <Attachment
-                etiqueta="Se cruza con"
-                tono="ambar"
-                pie="Solo tú ves este aviso. Miguel no sabe nada hasta que tú envíes una solicitud."
-              >
-                <p>
-                  <strong>{informe.titulo}</strong>
-                </p>
-                <p style={{ color: '#616061' }}>Entrega: {informe.fecha}</p>
-              </Attachment>
-              <Acciones>
-                <BotonSlack
-                  variante="primario"
-                  onClick={() => {
-                    dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'atendido' });
-                    abrirSolicitud();
-                  }}
-                >
-                  Pedir un ajuste
-                </BotonSlack>
-                <BotonSlack onClick={() => dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'postergado' })}>
-                  Ahora no
-                </BotonSlack>
-              </Acciones>
-            </Mensaje>
-          )}
-
-          {/* L-01b · "Ahora no" */}
-          {estado.avisoChoque === 'postergado' && (
-            <Mensaje hora="10:13">
-              <p>Listo, no hago nada. El choque sigue ahí por si quieres volver.</p>
-              <Attachment titulo="Sigue pendiente" pie="Miguel no recibió ningún aviso.">
-                <FechaCambio
-                  etiqueta="Las dos entregas"
-                  original={`${informe.titulo} · ${informe.fechaCorta}`}
-                  nueva={`${TAREA_NUEVA.titulo} · ${TAREA_NUEVA.fechaCorta}`}
-                />
-              </Attachment>
-              <Acciones>
-                <BotonSlack onClick={abrirSolicitud}>Pedir un ajuste</BotonSlack>
-                <BotonSlack onClick={() => dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'visible' })}>
-                  Ver el aviso otra vez
-                </BotonSlack>
-              </Acciones>
-            </Mensaje>
-          )}
-
           {/* Mensajes del flujo: envíos (L-05), respuestas de Miguel (L-06, L-07x) */}
           {estado.chat.map((m) => (
             <MensajeDeStore key={m.id} mensaje={m} onAccion={accion} onChip={enviar} />
@@ -417,28 +364,6 @@ export default function SlackLaura() {
             </p>
           )}
 
-          {/* L-05b · sigue pendiente a las 12:24 */}
-          {hayRecordatorio && (
-            <Mensaje hora="12:24">
-              <p>
-                {pendientes.length === 1 ? 'Tu solicitud lleva' : `Tus ${pendientes.length} solicitudes llevan`} 2 horas
-                sin respuesta.
-              </p>
-              <Attachment titulo="Sigue pendiente" tono="ambar" pie="Tu agenda no ha cambiado.">
-                {pendientes.map((s) => (
-                  <FechaCambio
-                    key={s.id}
-                    etiqueta={s.compromiso}
-                    original={s.fechaOriginal}
-                    nueva={s.propuesta}
-                  />
-                ))}
-              </Attachment>
-              <Acciones>
-                <BotonSlack onClick={abrirMisSolicitudes}>Ver mis solicitudes</BotonSlack>
-              </Acciones>
-            </Mensaje>
-          )}
         </>
       ) : (
         <ConversacionDemo conv={conv} />

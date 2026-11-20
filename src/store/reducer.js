@@ -3,7 +3,7 @@
    y el moderador disparan acciones. */
 
 import { estadoInicial, conHistorialEjemplo } from './estadoInicial.js';
-import { dotPorId } from '../data/mock.js';
+import { dotPorId, TAREA_NUEVA, COMPROMISOS } from '../data/mock.js';
 
 let contador = 0;
 export const nuevoId = (prefijo = 'id') => {
@@ -43,8 +43,41 @@ export function reducer(estado, accion) {
     case 'VACIAR_HISTORIAL':
       return anotar({ ...estado, solicitudes: [] }, 'Historial vaciado');
 
-    case 'SET_RELOJ':
-      return anotar({ ...estado, reloj: accion.hora }, `Reloj → ${accion.hora}${accion.nota ? ` · ${accion.nota}` : ''}`);
+    case 'SET_RELOJ': {
+      let chat = estado.chat;
+      const pendientes = estado.solicitudes.filter((s) => s.estado === 'pendiente');
+
+      /* L-05b · a las 12:24 RITMO recuerda en el hilo lo que sigue sin respuesta */
+      if (accion.hora === '12:24' && pendientes.length > 0 && !chat.some((m) => m.marca === 'L-05b')) {
+        chat = [
+          ...chat,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: accion.hora,
+            marca: 'L-05b',
+            chip: 'pendiente',
+            texto:
+              pendientes.length === 1
+                ? 'Tu solicitud lleva 2 horas sin respuesta.'
+                : `Tus ${pendientes.length} solicitudes llevan 2 horas sin respuesta.`,
+            attachment: {
+              etiqueta: 'Sigue pendiente',
+              tono: 'ambar',
+              fecha: {
+                etiqueta: pendientes[0].compromiso,
+                original: pendientes[0].fechaOriginal,
+                nueva: pendientes[0].propuesta,
+              },
+              pie: 'Tu agenda no ha cambiado.',
+              acciones: [{ id: 'ver-mis-solicitudes', texto: 'Ver mis solicitudes' }],
+            },
+          },
+        ];
+      }
+
+      return anotar({ ...estado, reloj: accion.hora, chat }, `Reloj → ${accion.hora}${accion.nota ? ` · ${accion.nota}` : ''}`);
+    }
 
     case 'SET_FLAG':
       return anotar(
@@ -151,8 +184,60 @@ export function reducer(estado, accion) {
       return anotar({ ...estado, appVinculada: true }, 'App vinculada con el código');
 
     /* ---------- Aviso de choque ---------- */
-    case 'AVISO_CHOQUE':
-      return anotar({ ...estado, avisoChoque: accion.estadoAviso }, `Aviso de choque → ${accion.estadoAviso}`);
+    /* El aviso entra al hilo como un mensaje más: así llega en orden, debajo de lo
+       último que escribió Laura, y el hilo baja solo hasta él. */
+    case 'AVISO_CHOQUE': {
+      const yaEsta = (marca) => estado.chat.some((m) => m.marca === marca);
+      let chat = estado.chat;
+
+      if (accion.estadoAviso === 'visible' && !yaEsta('L-01')) {
+        chat = [
+          ...chat,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            marca: 'L-01',
+            texto: `Llegó ${TAREA_NUEVA.titulo} (${TAREA_NUEVA.fecha}), que pidió ${TAREA_NUEVA.pedidaPor}. Se cruza con ${COMPROMISOS[0].titulo}, también para el jueves.`,
+            attachment: {
+              etiqueta: 'Se cruza con',
+              tono: 'ambar',
+              lineas: [COMPROMISOS[0].titulo, `Entrega: ${COMPROMISOS[0].fecha}`],
+              pie: 'Solo tú ves este aviso. Miguel no sabe nada hasta que tú envíes una solicitud.',
+              acciones: [
+                { id: 'pedir-ajuste-aviso', texto: 'Pedir ajuste', variante: 'primario' },
+                { id: 'aviso-ahora-no', texto: 'Ahora no' },
+              ],
+            },
+          },
+        ];
+      }
+
+      if (accion.estadoAviso === 'postergado' && !yaEsta('L-01b')) {
+        chat = [
+          ...chat,
+          {
+            id: nuevoId('msg'),
+            de: 'ritmo',
+            at: estado.reloj,
+            marca: 'L-01b',
+            texto: 'Listo, no hago nada. El choque sigue ahí por si quieres volver.',
+            attachment: {
+              etiqueta: 'Sigue pendiente',
+              fecha: {
+                etiqueta: 'Las dos entregas',
+                original: `${COMPROMISOS[0].titulo} · ${COMPROMISOS[0].fechaCorta}`,
+                nueva: `${TAREA_NUEVA.titulo} · ${TAREA_NUEVA.fechaCorta}`,
+              },
+              pie: 'Miguel no recibió ningún aviso.',
+              acciones: [{ id: 'abrir-solicitud', texto: 'Pedir un ajuste' }],
+            },
+          },
+        ];
+      }
+
+      return anotar({ ...estado, avisoChoque: accion.estadoAviso, chat }, `Aviso de choque → ${accion.estadoAviso}`);
+    }
 
     /* ---------- Chat (C4) ---------- */
     case 'CHAT_PUSH':
