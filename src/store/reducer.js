@@ -26,6 +26,21 @@ export function reducer(estado, accion) {
     case 'RESET_TOTAL':
       return anotar(estadoInicial(), 'Reset total');
 
+    /* Un clic deja todo listo para T0 del protocolo v2: desde cero, sin onboarding,
+       con el historial de ejemplo, reloj 9:00 y sin aviso de choque todavía. */
+    case 'PREPARAR_SESION': {
+      const base = {
+        ...estadoInicial(),
+        onboarding: { slackLaura: 'listo', slackMiguel: 'listo', app: 'listo' },
+        appVinculada: true,
+        dotConfigurado: true,
+        reloj: '9:00',
+        avisoChoque: 'oculto',
+        flags: { errorEnvioProximo: false, codigoVencidoProximo: false },
+      };
+      return anotar(conHistorialEjemplo(base), 'Sesión preparada (protocolo v2)');
+    }
+
     case 'SALTAR_ONBOARDING':
       return anotar(
         {

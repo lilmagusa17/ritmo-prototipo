@@ -174,6 +174,10 @@ export default function Control() {
           <section className="bloque">
             <h2>Escenario</h2>
             <div className="fila">
+              {/* Lo primero de la sesión: deja a Laura en el DM de RITMO, con historial y reloj 9:00 */}
+              <button className="bmod bmod--primario" onClick={() => dispatch({ type: 'PREPARAR_SESION' })}>
+                Preparar sesión
+              </button>
               <button className="bmod bmod--peligro" onClick={() => dispatch({ type: 'RESET_TOTAL' })}>
                 Reset total <span className="kbd">R</span>
               </button>
