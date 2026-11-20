@@ -18,8 +18,11 @@ export const normalizar = (texto) =>
 const TABLA = [
   { id: 'solicitudes', claves: ['mis solicitudes', 'mi solicitud', 'respondio', 'respondió', 'estado'] },
   { id: 'saturacion', claves: ['saturad', 'no alcanzo', 'mucho trabajo', 'estres', 'cansad', 'agobiad'] },
-  { id: 'agenda', claves: ['hoy', 'agenda', 'que tengo', 'mi dia', 'mi día'] },
+  /* "cambiar orden" antes que "orden", y "organiza mi día" antes que "mi día":
+     si no, pedir otro orden devuelve el mismo plan y organizar devuelve la agenda. */
+  { id: 'reordenar', claves: ['cambiar orden', 'cambiar el orden', 'otro orden', 'otra opcion', 'reorganiza'] },
   { id: 'organizar', claves: ['organiza', 'prioriza', 'plan', 'orden'] },
+  { id: 'agenda', claves: ['hoy', 'agenda', 'que tengo', 'mi dia', 'mi día'] },
   { id: 'semana', claves: ['semana', 'entregas', 'pendientes'] },
   { id: 'pausa', claves: ['pausa', 'descanso'] },
   { id: 'ajuste', claves: ['ajuste', 'mover', 'plazo', 'solicitud'] },
@@ -36,8 +39,8 @@ export function detectarIntencion(texto) {
 }
 
 const CHIPS_FALLBACK = [
-  { texto: 'Ver mi día', envia: 'hoy' },
-  { texto: 'Organizar mi día', envia: 'organiza mi día' },
+  { texto: 'Ver mi día', envia: 'que tengo hoy' },
+  { texto: 'Proponme un orden', envia: 'organiza mi día' },
   { texto: 'Pedir un ajuste', envia: 'quiero pedir un ajuste' },
   { texto: 'Cambiar mi Dot', envia: 'cambiar mi dot' },
 ];
@@ -54,7 +57,13 @@ export function responder(intencion, estado) {
         attachment: {
           titulo: 'Tu agenda de hoy',
           lineas: AGENDA_HOY.map((e) => `${e.hora} · ${e.titulo} (${e.duracion})`),
-          acciones: [{ id: 'organizar-dia', texto: 'Organizar mi día', variante: 'primario' }],
+          /* Cada botón lleva a algo distinto: repetir "Organizar mi día" sin más
+             dejaba al participante dando vueltas sobre la misma lista. */
+          acciones: [
+            { id: 'organizar-dia', texto: 'Proponme un orden', variante: 'primario' },
+            { id: 'ver-entregas', texto: 'Ver mis entregas' },
+            { id: 'abrir-solicitud', texto: 'Pedir un ajuste' },
+          ],
         },
       };
 
@@ -72,7 +81,27 @@ export function responder(intencion, estado) {
           ],
           acciones: [
             { id: 'me-sirve', texto: 'Me sirve', variante: 'primario' },
-            { id: 'cambiar-orden', texto: 'Cambiar orden' },
+            { id: 'cambiar-orden', texto: 'Proponme otro orden' },
+          ],
+        },
+      };
+
+    /* Segunda propuesta: el foco temprano. Así "otro orden" cambia algo de verdad. */
+    case 'reordenar':
+      return {
+        texto: 'Va otra forma de armarlo, con el foco temprano:',
+        attachment: {
+          titulo: 'Otro orden posible',
+          tono: 'azul',
+          lineas: [
+            '9:45–11:00 · Bloque de foco: redactar el Informe mensual',
+            '12:00–13:00 · Cerrar los datos que faltan del informe',
+            '14:00–15:00 · Reporte de ventas para Comercial',
+            '15:00–16:30 · Revisar y preparar el avance para el 1:1 con Miguel',
+          ],
+          acciones: [
+            { id: 'me-sirve', texto: 'Me sirve', variante: 'primario' },
+            { id: 'organizar-dia', texto: 'Volver al primero' },
           ],
         },
       };

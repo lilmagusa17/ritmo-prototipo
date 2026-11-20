@@ -56,6 +56,7 @@ export default function useChatRitmo() {
 
       if (accionId === 'organizar-dia') return enviar('organiza mi día');
       if (accionId === 'cambiar-orden') return enviar('cambiar el orden del día');
+      if (accionId === 'ver-entregas') return enviar('mis entregas de la semana');
       if (accionId === 'me-sirve') {
         dispatch({
           type: 'CHAT_PUSH',
