@@ -121,3 +121,15 @@
   .dot-pulso{ animation:none; }
   .dot-circulo{ transition:none; }
 }
+
+/* Aviso de montaje en el índice (D0 del despliegue) */
+.aviso-montaje{
+  max-width:720px;
+  margin:0 0 var(--space-24);
+  padding:var(--space-12) var(--space-16);
+  background:var(--amber-100);
+  border:1px solid var(--amber-700);
+  border-radius:var(--radius-md);
+  color:var(--neutral-900);
+  font-size:14px; line-height:1.55;
+}

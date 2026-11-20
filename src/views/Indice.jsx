@@ -13,6 +13,13 @@ export default function Indice() {
         propia ventana del mismo navegador y lo que pase en una aparece en las demás.
       </p>
 
+      {/* El aviso que evita el malentendido típico al abrir la URL desplegada */}
+      <p className="aviso-montaje">
+        <strong>Un navegador, un computador.</strong> El estado se guarda en este navegador. Si abres el prototipo en
+        otro equipo, en otro navegador o en una ventana de incógnito, ese lado empieza desde cero: para moderar, las
+        ventanas del participante y la tuya tienen que ser del mismo navegador.
+      </p>
+
       <ul className="rutas">
         {RUTAS.map((r) => (
           <li key={r.hash}>
