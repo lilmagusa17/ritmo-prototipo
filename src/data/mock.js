@@ -55,7 +55,7 @@ export const AGENDA_HOY = [
 export const COMPROMISOS = [
   { id: 'informe-mensual', titulo: 'Informe mensual', fechaISO: '2026-11-12', fecha: 'jueves 12 nov', fechaCorta: 'jue 12 nov' },
   { id: 'plan-trimestral', titulo: 'Plan trimestral', fechaISO: '2026-11-20', fecha: 'viernes 20 nov', fechaCorta: 'vie 20 nov' },
-  { id: 'presentacion-cliente', titulo: 'Presentación a cliente', fechaISO: '2026-11-17', fecha: 'martes 17 nov', fechaCorta: 'mar 17 nov' },
+  { id: 'presentacion-cliente', titulo: 'Presentación a cliente', fechaISO: '2026-11-19', fecha: 'jueves 19 nov', fechaCorta: 'jue 19 nov' },
   { id: 'cierre-inventario', titulo: 'Cierre de inventario', fechaISO: '2026-11-27', fecha: 'viernes 27 nov', fechaCorta: 'vie 27 nov' },
   { id: 'plan-capacitacion', titulo: 'Plan de capacitación', fechaISO: '2026-12-04', fecha: 'viernes 4 dic', fechaCorta: 'vie 4 dic' },
 ];

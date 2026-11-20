@@ -107,7 +107,7 @@ export function armarSolicitud(borrador) {
 export const ALTERNATIVAS = {
   plazo: [
     { id: 'vie-13', titulo: 'viernes 13 nov', detalle: 'Un día más, no dos' },
-    { id: 'mar-17', titulo: 'martes 17 nov', detalle: 'Después de la presentación a cliente' },
+    { id: 'mar-17', titulo: 'martes 17 nov', detalle: 'Después de la revisión con dirección del lunes' },
     { id: 'sin-fecha', titulo: 'Sin fecha por ahora', detalle: 'Lo definimos en el 1:1 de hoy a las 16:30' },
   ],
   prioridad: [
