@@ -171,16 +171,35 @@ export function reducer(estado, accion) {
       return { ...estado, notificaciones: estado.notificaciones.filter((n) => n.id !== accion.id) };
 
     /* ---------- Panel derecho de Slack ---------- */
-    case 'PANEL_ABRIR':
-      return {
-        ...estado,
-        panel: {
-          abierto: true,
-          pantalla: accion.pantalla,
-          lado: accion.lado || 'laura',
-          solicitudId: accion.solicitudId ?? estado.panel.solicitudId ?? null,
-        },
+    case 'PANEL_ABRIR': {
+      const panel = {
+        abierto: true,
+        pantalla: accion.pantalla,
+        lado: accion.lado || 'laura',
+        solicitudId: accion.solicitudId ?? estado.panel.solicitudId ?? null,
       };
+
+      /* H2 del protocolo mide cuánto tarda Miguel desde que abre el detalle hasta
+         que responde (≤ 90 s). Guardamos el momento real en la solicitud y dejamos
+         la apertura en el log, para poder cronometrarlo después. */
+      if (panel.lado === 'miguel' && panel.pantalla === 'M-02' && panel.solicitudId) {
+        const sol = estado.solicitudes.find((s) => s.id === panel.solicitudId);
+        if (sol) {
+          return anotar(
+            {
+              ...estado,
+              panel,
+              solicitudes: estado.solicitudes.map((s) =>
+                s.id === sol.id ? { ...s, abiertoM02En: Date.now() } : s,
+              ),
+            },
+            `Miguel abrió M-02 · ${sol.compromiso}`,
+          );
+        }
+      }
+
+      return { ...estado, panel };
+    }
 
     case 'PANEL_CERRAR':
       return { ...estado, panel: { abierto: false, pantalla: null, lado: null } };
@@ -442,7 +461,13 @@ export function reducer(estado, accion) {
         });
       }
 
-      return anotar(siguiente, `Miguel respondió: ${textoHistorial.toLowerCase()}`);
+      /* Segundos entre abrir M-02 y responder: la métrica de H2 */
+      const segundos = sol.abiertoM02En ? Math.round((Date.now() - sol.abiertoM02En) / 1000) : null;
+
+      return anotar(
+        siguiente,
+        `Miguel respondió: ${textoHistorial.toLowerCase()}${segundos !== null ? ` · ${segundos} s desde M-02` : ''}`,
+      );
     }
 
     /* Laura responde a la alternativa: L-07 acordada · L-07d sin acuerdo */

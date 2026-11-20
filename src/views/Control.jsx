@@ -368,6 +368,8 @@ export default function Control() {
                 {[...estado.log].reverse().map((l, i) => (
                   <li key={`${l.real}-${i}`}>
                     <b>{l.at}</b>
+                    {/* La hora real es la que sirve para cronometrar en las notas de la sesión */}
+                    <span className="real">{l.real || ''}</span>
                     <span>{l.texto}</span>
                   </li>
                 ))}

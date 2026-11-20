@@ -69,13 +69,15 @@
   font-size:13px;
 }
 .log li{
-  display:grid; grid-template-columns:52px 1fr;
+  /* hora simulada · hora real del reloj de pared · qué pasó */
+  display:grid; grid-template-columns:46px 66px 1fr;
   gap:var(--space-8);
   padding:var(--space-8) 0;
   border-bottom:1px solid var(--neutral-100);
   color:var(--neutral-600);
 }
 .log li b{ color:var(--neutral-900); font-variant-numeric:tabular-nums; }
+.log li .real{ color:var(--neutral-500); font-variant-numeric:tabular-nums; }
 
 .enlaces{ display:grid; gap:var(--space-8); }
 .enlaces a{
