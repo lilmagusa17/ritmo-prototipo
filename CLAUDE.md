@@ -209,12 +209,12 @@ Círculo de ~60vmin centrado sobre fondo oscuro neutro. Sin texto por defecto. D
 
 ### Control del moderador (`#/control`)
 Botones grandes, agrupados:
-- **Escenario:** Reset total · Saltar onboarding · Cargar historial de ejemplo / vaciar historial
+- **Escenario:** Preparar sesión (deja todo listo para la tarea 1 del protocolo: sin onboarding, con historial, reloj 9:00) · Reset total · Saltar onboarding · Cargar historial de ejemplo / vaciar historial
 - **Tiempo simulado:** reloj visible; botones 9:00 · 10:12 (llega tarea nueva → L-01) · 11:00 · 12:24 (+2 h sin respuesta → L-05b/M-01b) · 14:00 · 18:00
 - **Eventos:** Disparar aviso de choque · Miguel responde (aceptar / alternativa / rechazar) como Wizard of Oz si no hay segundo participante · Error de envío en el próximo envío · Código vencido en el próximo vínculo
 - **Dot:** botones de los 5 estados (disparan C7)
 - **Log** de eventos con hora (para notas de la prueba)
-Reemplaza los atajos de teclado de Figma (E/T/R/C) por estos botones; mantén los atajos como extra.
+Reemplaza los atajos de teclado de Figma (E/T/R/C) por estos botones; mantén los atajos como extra. Reset total pide **Shift+R**: con la `r` sola, una tecla suelta borraba la sesión.
 
 ---
 

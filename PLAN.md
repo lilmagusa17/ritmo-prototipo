@@ -253,3 +253,42 @@ L-06, L-07, M-01, M-02, M-07 y APP-04. Las correcciones C1–C7 siguieron mandan
 
 **Estado del ensayo:** T1 a T6 recorridas contra la URL pública, las seis pasan. El guion de `#/control` quedó
 actualizado con el montaje (incluido el Ctrl+F5 inicial) y con lo que conviene observar en cada tarea.
+
+
+---
+
+## 10. Protocolo de prueba v2 (Entregable 4)
+
+El protocolo de la sesión numera sus tareas **T0–T7**. No son las T1–T6 de la §8 de `CLAUDE.md`:
+esas son las del plan de desarrollo, es decir, lo que el prototipo tenía que soportar. Las de abajo
+son lo que se le pide al participante, en orden, y el participante juega **primero a Laura y después
+a Miguel** en el mismo laptop.
+
+| Tarea | Qué hace el participante | Qué prepara el moderador |
+|---|---|---|
+| T0 | Habla con RITMO para organizar su día | Reloj en 9:00 |
+| T1 | Lee el aviso de choque y decide | Salta a 10:12 |
+| T2 | Crea «Modificar plazo», da consentimiento y envía | Activa «Error en el próximo envío» cuando Laura esté en L-03 |
+| T3 | Como Miguel, abre la solicitud y propone el martes 17 | Pasa a la ventana de Miguel y cronometra M-02 → M-05 |
+| T4 | Como Laura, compara las tres fechas y decide | Vuelve a la ventana de Laura |
+| T5 | Busca en el historial la solicitud del 3 de nov | — |
+| T6 | Cancela la solicitud del Plan de capacitación | — |
+| T7 | Como Miguel, rechaza la del Cierre de inventario | — |
+
+**Qué cambió en el prototipo para sostenerlo** (ver los commits `P0-1 … P1-3`):
+
+- El historial de ejemplo trae **dos pendientes del 9 nov** —Plan de capacitación y Cierre de
+  inventario— que T6 y T7 usan. Se fue la pendiente del Informe mensual, que duplicaba la solicitud
+  creada en vivo en T2 y hacía dudar al moderador de cuál era cuál.
+- **«Cargar historial» fusiona** en vez de reemplazar: lo enviado en vivo se queda, y de primero.
+- Botón **«Preparar sesión»**: un clic deja el montaje de T0 (sin onboarding, con historial, reloj
+  9:00, sin aviso de choque).
+- **Reset total pasa a Shift+R.** La `r` sola borraba la sesión y en el protocolo v1 esa tecla
+  significaba otra cosa.
+- La **Presentación a cliente se movió al jueves 19 nov**: estaba el martes 17, el mismo día que la
+  alternativa de Miguel, y aceptarla creaba un choque nuevo que nada avisaba.
+- El **log** muestra la hora real junto a la simulada, anota cuándo Miguel abre M-02 y cuántos
+  segundos tardó en responder (métrica de H2, ≤ 90 s), y registra cada mensaje del chat de T0 con la
+  intención que detectó el bot.
+- **L-06** dice qué pasa con cada botón, detrás de `SHOW_CONSECUENCIAS_L06` (en `true`; apagarlo es la
+  condición de control de Q4.1).
