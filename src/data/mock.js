@@ -3,6 +3,10 @@
 /* Flags del prototipo */
 export const SHOW_COMPANY_POLICY = false; // C6: política de no represalia, apagada por defecto
 
+/* L-06 · dice qué pasa con cada botón antes de que Laura elija.
+   Apagarlo deja L-06 como estaba, para medir el efecto de que no esté (Q4.1 del protocolo). */
+export const SHOW_CONSECUENCIAS_L06 = true;
+
 /* Hoy ficticio del prototipo */
 export const HOY = {
   iso: '2026-11-10',

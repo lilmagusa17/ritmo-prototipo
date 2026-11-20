@@ -3,7 +3,7 @@
    y el moderador disparan acciones. */
 
 import { estadoInicial, conHistorialEjemplo } from './estadoInicial.js';
-import { dotPorId, TAREA_NUEVA, COMPROMISOS } from '../data/mock.js';
+import { dotPorId, TAREA_NUEVA, COMPROMISOS, SHOW_CONSECUENCIAS_L06 } from '../data/mock.js';
 
 let contador = 0;
 export const nuevoId = (prefijo = 'id') => {
@@ -388,6 +388,16 @@ export function reducer(estado, accion) {
                     tuya: sol.propuesta,
                     deMiguel: accion.alternativa,
                   },
+                  /* Qué pasa con cada botón, antes de elegir. Detrás del flag para
+                     poder medir el efecto de que no esté (Q4.1 del protocolo). */
+                  lineas: SHOW_CONSECUENCIAS_L06
+                    ? [
+                        `Si aceptas: ${sol.compromiso} pasa a ${accion.alternativa} y queda acordado.`,
+                        `Si no te sirve: se cierra sin acuerdo y ${sol.compromiso} ${
+                          sol.tipo === 'plazo' ? `sigue el ${sol.fechaOriginal}` : `sigue igual: ${sol.fechaOriginal}`
+                        }.`,
+                      ]
+                    : [],
                   acciones: [
                     { id: 'aceptar-alternativa', texto: 'Aceptar la alternativa', variante: 'primario' },
                     { id: 'rechazar-alternativa', texto: 'No me sirve' },
