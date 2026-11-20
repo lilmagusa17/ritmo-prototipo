@@ -28,6 +28,13 @@ export default function useChatRitmo() {
       const repetida = anterior === intencion;
 
       dispatch({ type: 'CHAT_PUSH', mensaje: { de: 'laura', at: estado.reloj, texto: limpio, intencion } });
+
+      /* El log del moderador guarda lo que escribió y en qué intención cayó: así se
+         puede contar, en T0, cuántos intentos hizo hasta una respuesta útil y
+         cuántas veces cayó en el fallback. Los chips también pasan por aquí. */
+      const corto = limpio.length > 60 ? `${limpio.slice(0, 60)}…` : limpio;
+      dispatch({ type: 'LOG', texto: `Chat · Laura: "${corto}" → ${intencion}` });
+
       dispatch({ type: 'CHAT_ESCRIBIENDO', valor: true });
 
       const demora = DEMORA_MIN + Math.random() * (DEMORA_MAX - DEMORA_MIN);
