@@ -65,8 +65,17 @@ export const estadoInicial = () => ({
   log: [],
 });
 
-/* Estado con el historial de ejemplo cargado (botón del panel de control) */
-export const conHistorialEjemplo = (estado) => ({
-  ...estado,
-  solicitudes: HISTORIAL_EJEMPLO.map((s) => ({ ...s })),
-});
+/* Estado con el historial de ejemplo cargado (botón del panel de control).
+
+   Fusiona, no reemplaza: lo que Laura envió en vivo durante la sesión se queda, y
+   se queda de primera, porque el reducer inserta cada solicitud nueva al inicio y
+   el panel del moderador responde como Miguel a la primera pendiente. Las copias
+   anteriores del historial se quitan, así que cargarlo dos veces no duplica nada. */
+export const conHistorialEjemplo = (estado) => {
+  const delHistorial = new Set(HISTORIAL_EJEMPLO.map((s) => s.id));
+  const enVivo = estado.solicitudes.filter((s) => !delHistorial.has(s.id));
+  return {
+    ...estado,
+    solicitudes: [...enVivo, ...HISTORIAL_EJEMPLO.map((s) => ({ ...s }))],
+  };
+};
