@@ -347,7 +347,15 @@ export default function PanelRespuesta() {
           <FechaCambio
             etiqueta={solicitud.compromiso}
             original={solicitud.fechaOriginal}
-            nueva={solicitud.estado === 'alternativa' ? solicitud.alternativaMiguel : solicitud.propuesta}
+            /* Si rechazó, nada cambió: mostrar aquí la propuesta de Laura hacía
+               leer el rechazo como si se hubiera aplicado (C2) */
+            nueva={
+              solicitud.estado === 'alternativa'
+                ? solicitud.alternativaMiguel
+                : solicitud.estado === 'rechazada'
+                  ? 'sigue igual'
+                  : solicitud.propuesta
+            }
           />
         </div>
 
