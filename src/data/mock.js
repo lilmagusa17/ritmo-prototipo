@@ -171,14 +171,21 @@ export const HISTORIAL_EJEMPLO = [
 
 /* Etiquetas de estado de la solicitud (§7). Nunca solo color: siempre llevan texto. */
 export const ETIQUETAS_ESTADO = {
-  borrador: { texto: 'Borrador', tono: 'neutral' },
-  pendiente: { texto: 'Pendiente', tono: 'ambar' },
-  aceptada: { texto: 'Aceptada', tono: 'verde' },
-  alternativa: { texto: 'Alternativa recibida', tono: 'azul' },
-  acordada: { texto: 'Acordada', tono: 'verde' },
-  rechazo_alt: { texto: 'Sin acuerdo', tono: 'rojo' },
-  rechazada: { texto: 'Sin acuerdo', tono: 'rojo' },
-  cancelada: { texto: 'Cancelada', tono: 'neutral' },
+  borrador: { texto: 'Borrador', tono: 'neutral', glifo: '✎' },
+  pendiente: { texto: 'Pendiente', tono: 'ambar', glifo: '◷' },
+  aceptada: { texto: 'Aceptada', tono: 'verde', glifo: '✓' },
+  alternativa: { texto: 'Alternativa recibida', tono: 'azul', glifo: '⇄' },
+  acordada: { texto: 'Acordada', tono: 'verde', glifo: '✓' },
+  rechazo_alt: { texto: 'Sin acuerdo', tono: 'rojo', glifo: '✕' },
+  rechazada: { texto: 'Sin acuerdo', tono: 'rojo', glifo: '✕' },
+  cancelada: { texto: 'Cancelada', tono: 'neutral', glifo: '⊘' },
+};
+
+/* Desde Miguel, "alternativa" no es "alternativa recibida": él ya respondió y
+   espera a Laura (Figma M-07). El texto nunca va solo por color (§8). */
+export const ETIQUETAS_ESTADO_MIGUEL = {
+  ...ETIQUETAS_ESTADO,
+  alternativa: { texto: 'Esperando respuesta', tono: 'azul', glifo: '⇄' },
 };
 
 /* Saltos del reloj simulado del panel del moderador (§6) */

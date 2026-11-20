@@ -357,3 +357,40 @@
 @media (max-width:1180px){
   .accesos{ grid-template-columns:1fr; }
 }
+
+/* ---------- M-07 a pantalla completa (Figma 114:15381) ---------- */
+.tabla-pantalla, .tabla-vacia{ padding:var(--space-24) var(--space-24) 0; }
+.tabla-pantalla h2, .tabla-vacia h2{ margin:0 0 var(--space-4); font-size:20px; font-weight:900; }
+.tabla-sub{ margin:0 0 var(--space-16); color:#616061; font-size:14px; }
+.tabla-vacia p{ margin:0 0 var(--space-8); font-size:15px; }
+.tabla-solicitudes{ width:100%; border-collapse:collapse; font-size:15px; }
+.tabla-solicitudes th{
+  text-align:left; font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+  color:#454245; font-weight:700;
+  background:var(--neutral-100);
+  padding:var(--space-8) var(--space-12);
+  border-bottom:1px solid var(--neutral-200);
+}
+.tabla-solicitudes td{
+  padding:var(--space-12); border-bottom:1px solid var(--neutral-200); vertical-align:middle;
+}
+.tabla-solicitudes tr:hover td{ background:#fafafa; }
+.tabla-solicitudes .col-fecha{ color:#616061; white-space:nowrap; }
+.tabla-solicitudes .col-compromiso{ font-weight:700; }
+.tabla-solicitudes .col-abrir{ text-align:right; white-space:nowrap; }
+
+/* El estado nunca va solo por color: lleva glifo y texto (§8) */
+.chip-estado{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:3px var(--space-8); border-radius:var(--radius-full);
+  font-size:13px; font-weight:700; white-space:nowrap;
+  background:var(--neutral-100); color:#454245;
+}
+.chip-estado--ambar{ background:var(--amber-100); color:var(--amber-700); }
+.chip-estado--verde{ background:var(--green-100); color:var(--green-600); }
+.chip-estado--azul{ background:var(--blue-100); color:var(--blue-600); }
+.chip-estado--rojo{ background:var(--red-100); color:#c0143c; }
+
+/* El hilo se apoya abajo, como en Slack: los mensajes nuevos entran por el pie */
+.mensajes{ display:flex; flex-direction:column; }
+.mensajes::before{ content:''; margin-top:auto; }

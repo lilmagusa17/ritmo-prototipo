@@ -12,13 +12,13 @@ import FechaCambio from '../components/FechaCambio.jsx';
 import PanelRespuesta from '../flows/respuesta/PanelRespuesta.jsx';
 import { useStore } from '../store/StoreProvider.jsx';
 import { solicitudesDeMiguel, pendientesDeMiguel } from '../store/reducer.js';
-import { HOY, SALTOS_RELOJ, ETIQUETAS_ESTADO } from '../data/mock.js';
+import { HOY, SALTOS_RELOJ, ETIQUETAS_ESTADO, ETIQUETAS_ESTADO_MIGUEL } from '../data/mock.js';
 
 const TITULOS_PANEL = {
-  'M-02': 'Solicitud de Laura',
+  'M-02': 'Solicitud de ajuste',
   'M-02c': 'Confirmar',
   'M-03': 'Proponer alternativa',
-  'M-04': 'No puedo aceptar',
+  'M-04': 'Rechazar la solicitud',
   'M-05': 'Alternativa enviada',
   'M-05b': 'Ajuste aceptado',
   'M-05c': 'Respuesta enviada',
@@ -35,9 +35,74 @@ function destinoDe(s) {
   return s.propuesta;
 }
 
+
+/* M-07 · solicitudes del equipo, a pantalla completa como en el Figma (114:15381).
+   C3: una solicitud cancelada no llega hasta aquí, desaparece de la vista de Miguel. */
+function TablaSolicitudes({ lista, onAbrir }) {
+  if (lista.length === 0) {
+    return (
+      <div className="tabla-vacia">
+        <h2>Solicitudes del equipo</h2>
+        <p>Todavía no hay solicitudes.</p>
+        <p className="tabla-sub">
+          Cuando alguien del equipo pida un ajuste, te llega aquí con su nombre y el compromiso que quiere mover.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="tabla-pantalla">
+      <h2>Solicitudes del equipo</h2>
+      <p className="tabla-sub">Solicitudes de ajuste y sus acuerdos. Las pendientes aparecen primero.</p>
+
+      <table className="tabla-solicitudes">
+        <thead>
+          <tr>
+            <th scope="col">Fecha</th>
+            <th scope="col">Quién</th>
+            <th scope="col">Compromiso</th>
+            <th scope="col">Estado</th>
+            <th scope="col"><span className="sr-only">Abrir</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {lista.map((s) => {
+            const et = ETIQUETAS_ESTADO_MIGUEL[s.estado] || ETIQUETAS_ESTADO[s.estado];
+            return (
+              <tr key={s.id}>
+                <td className="col-fecha">{s.fecha || `${HOY.corto}, ${s.historial?.[0]?.at || ''}`}</td>
+                <td>Laura</td>
+                <td className="col-compromiso">{s.compromiso}</td>
+                <td>
+                  <span className={`chip-estado chip-estado--${et?.tono}`}>
+                    <span aria-hidden="true">{et?.glifo}</span> {et?.texto}
+                  </span>
+                </td>
+                <td className="col-abrir">
+                  <button
+                    className="btn-slack"
+                    onClick={() => onAbrir(s.id)}
+                    aria-label={`Abrir la solicitud de Laura sobre ${s.compromiso}`}
+                  >
+                    {s.estado === 'pendiente' ? 'Responder' : 'Ver'}
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function SlackMiguel() {
   const { estado, dispatch } = useStore();
   const [conv, setConv] = useState({ tipo: 'dm', id: 'ritmo' });
+  /* La pestaña "Solicitudes del equipo" cambia el área principal, no abre el panel:
+     en el Figma M-07 ocupa toda la pantalla y el detalle sí va en el panel. */
+  const [vista, setVista] = useState('mensajes');
   const esRitmo = conv.tipo === 'dm' && conv.id === 'ritmo';
 
   const lista = solicitudesDeMiguel(estado);
@@ -45,7 +110,10 @@ export default function SlackMiguel() {
   const hayRecordatorio = pendientes.length > 0 && horaIndice(estado.reloj) >= horaIndice('12:24');
 
   const abrirDetalle = (id) => dispatch({ type: 'PANEL_ABRIR', pantalla: 'M-02', lado: 'miguel', solicitudId: id });
-  const abrirLista = () => dispatch({ type: 'PANEL_ABRIR', pantalla: 'M-07', lado: 'miguel', solicitudId: null });
+  const abrirLista = () => {
+    dispatch({ type: 'PANEL_CERRAR' });
+    setVista('equipo');
+  };
 
   return (
     <SlackShell
@@ -58,35 +126,44 @@ export default function SlackMiguel() {
         {
           id: 'mensajes',
           texto: 'Mensajes',
-          activa: !(estado.panel.abierto && estado.panel.lado === 'miguel'),
-          onClick: () => dispatch({ type: 'PANEL_CERRAR' }),
+          activa: vista === 'mensajes',
+          onClick: () => setVista('mensajes'),
         },
         {
           id: 'equipo',
           texto: 'Solicitudes del equipo',
-          activa: estado.panel.abierto && estado.panel.lado === 'miguel',
+          activa: vista === 'equipo',
           onClick: abrirLista,
         },
       ]}
-      accesos={[
-        {
-          id: 'equipo',
-          glifo: '☰',
-          titulo: 'Solicitudes del equipo',
-          sub: pendientes.length > 0 ? `${pendientes.length} pendiente(s) de tu respuesta` : 'Nada pendiente',
-          onClick: abrirLista,
-        },
-        {
-          id: 'pendiente',
-          glifo: '↩',
-          titulo: 'Responder la más antigua',
-          sub: pendientes.length > 0 ? `Laura · ${pendientes[0].compromiso}` : 'No hay solicitudes',
-          onClick: () => (pendientes.length > 0 ? abrirDetalle(pendientes[0].id) : abrirLista()),
-        },
-      ]}
+      accesos={
+        vista === 'mensajes'
+          ? [
+              {
+                id: 'pendiente',
+                glifo: '◷',
+                titulo: 'Pendientes de responder',
+                sub:
+                  pendientes.length > 0
+                    ? `${pendientes.length} sin decisión · Laura · ${pendientes[0].compromiso}`
+                    : 'Ninguna sin decisión',
+                onClick: () => (pendientes.length > 0 ? abrirDetalle(pendientes[0].id) : abrirLista()),
+              },
+              {
+                id: 'equipo',
+                glifo: '☰',
+                titulo: 'Solicitudes del equipo',
+                sub: 'Estado y acuerdos',
+                onClick: abrirLista,
+              },
+            ]
+          : []
+      }
       scrollSenal={estado.chatMiguel.length + lista.length}
     >
-      {esRitmo ? (
+      {esRitmo && vista === 'equipo' ? (
+        <TablaSolicitudes lista={lista} onAbrir={abrirDetalle} />
+      ) : esRitmo ? (
         <>
           <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
 
@@ -128,7 +205,7 @@ export default function SlackMiguel() {
                 >
                   <FechaCambio etiqueta={s.compromiso} original={s.fechaOriginal} nueva={destinoDe(s)} />
                   {s.nota && <p>“{s.nota}”</p>}
-                  <p style={{ color: '#616061' }}>Tarea nueva que choca: {s.tareaNueva}</p>
+                  {s.tareaNueva && <p style={{ color: '#616061' }}>Tarea nueva que choca: {s.tareaNueva}</p>}
                 </Attachment>
                 <Acciones>
                   <BotonSlack variante={pendiente ? 'primario' : 'normal'} onClick={() => abrirDetalle(s.id)}>

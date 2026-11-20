@@ -151,3 +151,20 @@
 .opcion .fila-fechas{ display:block; margin-top:2px; font-size:13px; color:#454245; }
 .opcion .fila-fechas .vieja{ color:#616061; text-decoration:line-through; }
 .opcion .fila-fechas strong{ display:inline; }
+
+/* M-02 · cabecera de estado y bloque de la tarea que se cruza (Figma 106:11051) */
+.linea-estado{
+  display:flex; align-items:center; gap:var(--space-8);
+  margin:0 0 var(--space-12); flex-wrap:wrap;
+}
+.linea-estado .enviada{ font-size:13px; color:#616061; }
+.bloque-cruce{
+  border-left:3px solid var(--slack-warning);
+  padding:var(--space-4) 0 var(--space-4) var(--space-12);
+  margin:0 0 var(--space-16);
+}
+.bloque-cruce h4{
+  margin:0 0 2px; font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+  color:#454245; font-weight:700;
+}
+.bloque-cruce p{ margin:0; font-size:15px; font-weight:700; }

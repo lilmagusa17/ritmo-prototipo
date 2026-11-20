@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { solicitudesDeMiguel } from '../../store/reducer.js';
 import { ALTERNATIVAS, RAZONES_RECHAZO } from '../solicitud/campos.js';
-import { ETIQUETAS_ESTADO } from '../../data/mock.js';
+import { ETIQUETAS_ESTADO, ETIQUETAS_ESTADO_MIGUEL } from '../../data/mock.js';
 import FechaCambio from '../../components/FechaCambio.jsx';
 import { BotonSlack } from '../../components/Mensaje.jsx';
 
@@ -70,28 +70,46 @@ export default function PanelRespuesta() {
 
   /* ---------- M-02 · detalle ---------- */
   if (pantalla === 'M-02') {
+    const et = ETIQUETAS_ESTADO_MIGUEL[solicitud.estado] || ETIQUETAS_ESTADO[solicitud.estado];
     return (
       <>
-        <p className="paso-indicador">{ETIQUETAS_ESTADO[solicitud.estado]?.texto}</p>
+        {/* Estructura del Figma M-02: estado + "lo que te enviaron" + la tarea que se cruza */}
+        <p className="linea-estado">
+          <span className={`chip-estado chip-estado--${et?.tono}`}>
+            <span aria-hidden="true">{et?.glifo}</span> {et?.texto}
+          </span>
+          <span className="enviada">Enviada {solicitud.fecha}</span>
+        </p>
+
         <h3 className="panel-titulo">Laura pide: {solicitud.tipoTitulo.toLowerCase()}</h3>
 
         <div className="resumen">
-          <h4>Lo que pide</h4>
-          {/* C2 · original → nueva */}
-          <FechaCambio etiqueta={solicitud.compromiso} original={solicitud.fechaOriginal} nueva={solicitud.propuesta} />
+          <h4>Lo que te enviaron</h4>
           <dl>
-            <dt>Tarea nueva que choca</dt>
-            <dd>{solicitud.tareaNueva}</dd>
-            {solicitud.nota && (
-              <>
-                <dt>Nota de Laura</dt>
-                <dd>“{solicitud.nota}”</dd>
-              </>
-            )}
-            <dt>Enviada</dt>
-            <dd>{solicitud.fecha}</dd>
+            <dt>Tipo de ajuste</dt>
+            <dd>{solicitud.tipoTitulo}</dd>
+            <dt>Compromiso afectado</dt>
+            <dd>{solicitud.compromiso}</dd>
+            <dt>Propuesta</dt>
+            <dd>
+              {/* C2 · original → nueva, siempre las dos fechas */}
+              <FechaCambio
+                etiqueta={solicitud.compromiso}
+                original={solicitud.fechaOriginal}
+                nueva={solicitud.propuesta}
+              />
+            </dd>
+            <dt>Nota de Laura</dt>
+            <dd>{solicitud.nota ? `“${solicitud.nota}”` : 'Sin nota'}</dd>
           </dl>
         </div>
+
+        {solicitud.tareaNueva && (
+          <div className="bloque-cruce">
+            <h4>Tarea nueva que se cruza</h4>
+            <p>{solicitud.tareaNueva}</p>
+          </div>
+        )}
 
         <p className="campo-ayuda">
           Ves este compromiso y su fecha porque Laura decidió compartirlos. No ves su agenda ni sus conversaciones con
@@ -110,12 +128,12 @@ export default function PanelRespuesta() {
           </>
         ) : (
           <div className="panel-pie">
-            <BotonSlack variante="primario" onClick={() => irA('M-02c')}>
-              Aceptar
+            <BotonSlack variante="peligro" onClick={() => irA('M-04')}>
+              Rechazar
             </BotonSlack>
             <BotonSlack onClick={() => irA('M-03')}>Proponer alternativa</BotonSlack>
-            <BotonSlack variante="peligro" onClick={() => irA('M-04')}>
-              No puedo
+            <BotonSlack variante="primario" onClick={() => irA('M-02c')}>
+              Aceptar
             </BotonSlack>
           </div>
         )}
