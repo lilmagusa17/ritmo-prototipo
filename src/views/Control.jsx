@@ -106,7 +106,11 @@ export default function Control() {
         <h3>Montaje (3 ventanas, mismo navegador)</h3>
         <ol>
           <li>
-            Laptop del participante: <code>#/slack/laura</code> a pantalla completa.
+            Abre el prototipo en <code>https://lilmagusa17.github.io/ritmo-prototipo/</code> y recarga con{' '}
+            <strong>Ctrl+F5</strong> una vez, por si el navegador tenía una versión vieja guardada.
+          </li>
+          <li>
+            Laptop del participante: <code>#/slack/laura</code> a pantalla completa. Necesita 1280 px de ancho o más.
           </li>
           <li>
             Segunda ventana con el teléfono: <code>#/app</code>.
@@ -127,24 +131,29 @@ export default function Control() {
         <ol>
           <li>
             <strong>T1 · Configurar.</strong> “Acabas de instalar RITMO en Slack y quieres conectarlo con tu teléfono.”
-            El código de Slack es <code>4 7 2 9</code>. No ayudes con el copy: queremos saber si entiende qué se
-            comparte.
+            En Slack toca “Conectar mi teléfono”; el código es <code>4 7 2 9</code> y se escribe en la app. No ayudes
+            con el copy: queremos saber si entiende qué se comparte y qué elige en “¿Tu equipo ve el nombre del
+            estado?”.
           </li>
           <li>
             <strong>T2 · Organizar el día.</strong> “Cuéntale a RITMO cómo va tu día.” Deja que escriba lo que quiera;
-            el bot responde por palabras clave (hoy, organiza, semana, saturada, pausa, ajuste, dot).
+            el bot responde por palabras clave (hoy, organiza, semana, saturada, pausa, ajuste, dot). Si repite la
+            misma petición, RITMO lo nota y ofrece otra salida en vez de repetirse: vale la pena ver si lo usa.
           </li>
           <li>
-            <strong>T3 · Pedir un ajuste.</strong> Salta a <strong>10:12</strong> para que llegue el aviso de choque.
-            Observa si lee el bloque “Miguel sabrá que esta solicitud es tuya” antes de marcar la casilla.
+            <strong>T3 · Pedir un ajuste.</strong> Salta a <strong>10:12</strong>: el aviso de choque llega al hilo
+            como un mensaje más, debajo de lo último que haya escrito. Observa por dónde entra —el mensaje, la pestaña
+            “Mis solicitudes” o el acceso “Solicitar ajuste” de abajo— y si lee el bloque “Miguel sabrá que esta
+            solicitud es tuya” antes de marcar la casilla.
           </li>
           <li>
-            <strong>T4 · Negociar.</strong> Usa <strong>Miguel propone alternativa</strong>. Mira si compara las tres
-            fechas (actual · suya · de Miguel) antes de aceptar.
+            <strong>T4 · Negociar.</strong> Usa <strong>Miguel propone alternativa</strong> (o deja que lo haga el
+            segundo participante desde su tabla “Solicitudes del equipo”). Mira si compara las tres fechas
+            (actual · suya · de Miguel) antes de aceptar.
           </li>
           <li>
-            <strong>T5 · Cancelar.</strong> Pídele que cancele una solicitud pendiente y luego muéstrale la ventana de
-            Miguel: ya no está.
+            <strong>T5 · Cancelar.</strong> Pídele que cancele una solicitud pendiente desde “Mis solicitudes” y luego
+            muéstrale la ventana de Miguel: ni en su chat ni en su tabla, y el contador bajó.
           </li>
           <li>
             <strong>T6 · Dot.</strong> Dispara <strong>Empieza bloque de foco</strong> sin avisar y no digas nada.
@@ -154,8 +163,9 @@ export default function Control() {
 
         <h3>Si algo se rompe</h3>
         <p>
-          Reset total y volver a la tarea; con “Saltar onboarding” llegas a la tarea 2 en un clic. El estado vive en este
-          navegador: no cierres las ventanas entre tareas.
+          Reset total y volver a la tarea; con “Saltar onboarding” llegas a la tarea 2 en un clic. El estado vive en
+          este navegador: no cierres las ventanas entre tareas. El chat se guarda tal cual, así que un hilo de una
+          sesión anterior conserva sus mensajes hasta que hagas Reset total.
         </p>
       </details>
 

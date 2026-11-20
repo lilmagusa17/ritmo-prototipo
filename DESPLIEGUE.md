@@ -13,8 +13,8 @@
 > tres señales) pasan, y `Reset total` deja el escenario en 9:00 con el onboarding desde cero.
 >
 > Se decidió **GitHub Pages** en vez de Netlify Drop (camino A del plan original) porque la URL es estable, no
-> caduca a las 24 h y no exige iniciar sesión al participante. El mismo build quedó además como artifact privado de
-> respaldo: https://claude.ai/artifact/EoWbMWvCYVy7E7SMFWDJYY (solo lo abre quien tenga acceso a tu cuenta de Claude).
+> caduca a las 24 h y no exige iniciar sesión al participante. Hubo un artifact privado de respaldo con un build
+> temprano; quedó desactualizado y no se mantiene: usa la URL de Pages.
 
 > Objetivo: que la sesión de pruebas no dependa de `npm run dev` en tu computador. El prototipo queda en una URL
 > que se abre en cualquier navegador, con las cinco vistas en sus hash: `#/slack/laura`, `#/slack/miguel`, `#/app`,

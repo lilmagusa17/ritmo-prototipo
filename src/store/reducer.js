@@ -236,6 +236,11 @@ export function reducer(estado, accion) {
         ];
       }
 
+      /* "Ocultar aviso" lo quita del hilo: si no, el mensaje se quedaba ahí */
+      if (accion.estadoAviso === 'oculto') {
+        chat = chat.filter((m) => m.marca !== 'L-01' && m.marca !== 'L-01b');
+      }
+
       return anotar({ ...estado, avisoChoque: accion.estadoAviso, chat }, `Aviso de choque → ${accion.estadoAviso}`);
     }
 

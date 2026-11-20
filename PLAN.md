@@ -2,7 +2,8 @@
 
 > **Estado: F0 a F7 terminadas.** El prototipo corre con `npm install && npm run dev` y `npm run build` pasa limpio.
 > Las seis tareas de la prueba (T1–T6) se recorrieron de punta a punta en el navegador. El guion de moderación
-> vive arriba de `#/control`, así que no hace falta llevar este documento a la sesión.
+> vive arriba de `#/control`, así que no hace falta llevar este documento a la sesión. La sección 9 recoge lo que
+> cambió después, al comparar con Figma y repetir el ensayo.
 >
 > | Fase | Commit |
 > |---|---|
@@ -215,3 +216,40 @@ coincidencias son comentarios del código que explican la corrección.
 clave con chips · aviso de choque, consentimiento y envío · alternativa de Miguel, comparación de tres fechas y
 acuerdo · cancelación que desaparece de la bandeja de Miguel y baja el contador · cambio de Dot con luz, mensaje en
 Slack y aviso en el teléfono.
+
+
+---
+
+## 9. Después del plan · ajuste al Figma y segundo ensayo
+
+Con el acceso al archivo de Figma (`w69L7Tyt7R5cRws4GmXl1R`, página `Prototype`) se compararon L-00, L-01, L-03,
+L-06, L-07, M-01, M-02, M-07 y APP-04. Las correcciones C1–C7 siguieron mandando donde chocaban.
+
+**Qué cambió en la interfaz**
+
+- RITMO vive en la sección **Apps** del sidebar, con su marca de cuatro barras en vez de la inicial "R", etiqueta
+  **APP** en la cabecera y un aviso en los DM con personas ("Chat directo con una persona · RITMO no lo lee"). El
+  participante ya no confunde el chat de Miguel con el del asistente.
+- Cabecera con pestañas **Mensajes / Mis solicitudes** (en Miguel, *Solicitudes del equipo*) y dos accesos grandes
+  encima del composer, siempre a la vista.
+- **M-07 pasó del panel de 440 px a ocupar el área principal**, como tabla: Fecha · Quién · Compromiso · Estado.
+  El estado va en chip con glifo y texto. C3 se mantiene: una cancelada no aparece.
+- **M-02** toma la estructura del Figma: chip de estado, "Lo que te enviaron", la tarea que se cruza aparte, y el
+  pie en el orden Rechazar · Proponer alternativa · Aceptar.
+- Los mensajes de resultado (L-05, L-06, L-07x, M-05x, M-06x) llevan chip de estado y etiqueta en versalitas
+  ("LO QUE ENVIASTE", "QUÉ CAMBIÓ", "TU RESPUESTA"). Las confirmaciones de Miguel dejaron de ser texto plano.
+- App móvil: barra con la marca, título "Inicio" y tarjeta del Dot con el círculo grande.
+
+**Qué se arregló en el segundo ensayo T1–T6**
+
+- El **aviso de choque** (L-01/L-01b) y el **recordatorio de las 12:24** (L-05b) eran bloques fijos del JSX: si la
+  participante ya había escrito, salían *arriba* de sus mensajes y, como el hilo baja al pie, no los veía. Ahora los
+  crea el reducer como mensajes del hilo, con su hora, una sola vez. "Ocultar aviso" los quita del hilo.
+- El hilo de Slack se apoya abajo y baja solo al llegar un mensaje, en Slack y en la pestaña Chat del teléfono.
+- Si la participante repite la misma petición, RITMO lo reconoce y ofrece la salida siguiente en vez de repetirse.
+- El envío de una solicitud dejaba dos mensajes en el hilo (uno del panel, otro del reducer); quedó uno.
+- Los assets vuelven a llevar hash en el nombre: con nombres fijos, un navegador que ya había abierto el prototipo
+  seguía con el JS viejo después de republicar.
+
+**Estado del ensayo:** T1 a T6 recorridas contra la URL pública, las seis pasan. El guion de `#/control` quedó
+actualizado con el montaje (incluido el Ctrl+F5 inicial) y con lo que conviene observar en cada tarea.
