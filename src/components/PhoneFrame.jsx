@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useStore } from '../store/StoreProvider.jsx';
+import MarcaRitmo from './MarcaRitmo.jsx';
 
 export const TABS = [
   { id: 'inicio', glifo: '⌂', texto: 'Inicio' },
@@ -19,7 +20,7 @@ function Push({ notificacion, onAbrir, onCerrar }) {
 
   return (
     <div className="push" role="status">
-      <span className="icono" aria-hidden="true">R</span>
+      <span className="icono" aria-hidden="true"><MarcaRitmo tam={18} titulo="" /></span>
       <button
         onClick={onAbrir}
         style={{ border: 0, background: 'none', textAlign: 'left', padding: 0, font: 'inherit' }}
@@ -73,6 +74,15 @@ export default function PhoneFrame({ tab, onTab, mostrarTabs = true, ayuda = nul
             <span>{estado.reloj}</span>
             <span aria-hidden="true">▮▮▮ ▮</span>
           </div>
+
+          {/* Barra de la app, como en el Figma (APP-04): marca, nombre y menú */}
+          {mostrarTabs && (
+            <div className="appbar-movil">
+              <MarcaRitmo tam={22} titulo="" />
+              <strong>RITMO</strong>
+              <span className="appbar-mas" aria-hidden="true">⋯</span>
+            </div>
+          )}
 
           <div className="pantalla-movil">{children}</div>
 

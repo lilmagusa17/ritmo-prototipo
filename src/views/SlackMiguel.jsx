@@ -54,11 +54,41 @@ export default function SlackMiguel() {
       onConversacion={setConv}
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Solicitudes del equipo'}
       panel={<PanelRespuesta />}
+      pestanas={[
+        {
+          id: 'mensajes',
+          texto: 'Mensajes',
+          activa: !(estado.panel.abierto && estado.panel.lado === 'miguel'),
+          onClick: () => dispatch({ type: 'PANEL_CERRAR' }),
+        },
+        {
+          id: 'equipo',
+          texto: 'Solicitudes del equipo',
+          activa: estado.panel.abierto && estado.panel.lado === 'miguel',
+          onClick: abrirLista,
+        },
+      ]}
+      accesos={[
+        {
+          id: 'equipo',
+          glifo: '☰',
+          titulo: 'Solicitudes del equipo',
+          sub: pendientes.length > 0 ? `${pendientes.length} pendiente(s) de tu respuesta` : 'Nada pendiente',
+          onClick: abrirLista,
+        },
+        {
+          id: 'pendiente',
+          glifo: '↩',
+          titulo: 'Responder la más antigua',
+          sub: pendientes.length > 0 ? `Laura · ${pendientes[0].compromiso}` : 'No hay solicitudes',
+          onClick: () => (pendientes.length > 0 ? abrirDetalle(pendientes[0].id) : abrirLista()),
+        },
+      ]}
       scrollSenal={estado.chatMiguel.length + lista.length}
     >
       {esRitmo ? (
         <>
-          <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+          <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
 
           {/* OM-01 · bienvenida, con el copy de C6 */}
           <Mensaje hora="8:40">
@@ -140,7 +170,7 @@ export default function SlackMiguel() {
         </>
       ) : (
         <>
-          <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+          <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
           {conv.tipo === 'dm' && conv.id === 'laura' ? (
             <>
               <Mensaje autor="miguel" hora="8:30">

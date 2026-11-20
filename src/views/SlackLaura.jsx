@@ -141,7 +141,7 @@ function OnboardingLaura() {
 
   return (
     <>
-      <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+      <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
 
       {/* O-01 · bienvenida. Bullets de C6: nada de promesas de anonimato */}
       <Mensaje hora="8:55">
@@ -212,7 +212,7 @@ function ConversacionDemo({ conv }) {
   if (conv.tipo === 'canal') {
     return (
       <>
-        <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+        <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
         <Mensaje autor="camila" hora="9:12">
           <p>Buenos días 👋 Dejo aquí el avance de la semana en #{conv.id}.</p>
         </Mensaje>
@@ -233,7 +233,7 @@ function ConversacionDemo({ conv }) {
         <Mensaje autor="laura" hora="16:52">
           <p>Voy con eso. Si se complica te aviso.</p>
         </Mensaje>
-        <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+        <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
         <Mensaje autor="ritmo" hora="9:00">
           <p>Este es tu chat directo con Miguel. Yo no leo lo que escriben aquí.</p>
           <Attachment titulo="Los ajustes no se piden por aquí" pie="En el prototipo solo funciona el chat con RITMO.">
@@ -246,7 +246,7 @@ function ConversacionDemo({ conv }) {
 
   return (
     <>
-      <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+      <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
       <Mensaje autor="camila" hora="10:05">
         <p>Hola Laura, te paso el Reporte de ventas para Comercial. Lo necesito el jueves 12.</p>
       </Mensaje>
@@ -285,6 +285,34 @@ export default function SlackLaura() {
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Pedir un ajuste'}
       panel={esMisSolicitudes ? <PanelMisSolicitudes /> : <PanelSolicitud />}
       composer={esRitmo && onboardingListo ? <ComposerLaura onEnviar={enviar} /> : null}
+      pestanas={
+        /* Cabecera del Figma (L-00): el participante tiene siempre a la vista
+           por dónde se pide un ajuste y dónde ve su estado. */
+        onboardingListo
+          ? [
+              {
+                id: 'mensajes',
+                texto: 'Mensajes',
+                activa: !(estado.panel.abierto && estado.panel.lado === 'laura' && esMisSolicitudes),
+                onClick: () => dispatch({ type: 'PANEL_CERRAR' }),
+              },
+              {
+                id: 'mis-solicitudes',
+                texto: 'Mis solicitudes',
+                activa: estado.panel.abierto && estado.panel.lado === 'laura' && esMisSolicitudes,
+                onClick: abrirMisSolicitudes,
+              },
+            ]
+          : []
+      }
+      accesos={
+        onboardingListo
+          ? [
+              { id: 'pedir', glifo: '＋', titulo: 'Solicitar ajuste', sub: 'Pide mover un plazo u otro ajuste', onClick: abrirSolicitud },
+              { id: 'mis', glifo: '☰', titulo: 'Mis solicitudes', sub: 'Estado y acuerdos', onClick: abrirMisSolicitudes },
+            ]
+          : []
+      }
       scrollSenal={
         /* ×2: así un mensaje nuevo nunca empata con el fin del "está escribiendo…" */
         estado.chat.length * 2 + (escribiendo ? 1 : 0) + (onboardingListo ? 1 : 0)
@@ -294,7 +322,7 @@ export default function SlackLaura() {
         <OnboardingLaura />
       ) : esRitmo ? (
         <>
-          <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+          <DiaSeparador>Hoy, {HOY.largo}</DiaSeparador>
 
           {/* L-00 · inicio */}
           <Mensaje hora="9:00">

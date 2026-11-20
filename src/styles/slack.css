@@ -21,6 +21,14 @@
   font-size:13px;
 }
 .slack-titlebar .historial{ display:flex; gap:var(--space-8); color:#ffffff80; }
+.titlebar-izq{ display:flex; align-items:center; }
+.titlebar-centro{ display:flex; align-items:center; justify-content:center; gap:var(--space-16); }
+.semaforo{ display:flex; gap:7px; }
+.semaforo i{ width:11px; height:11px; border-radius:var(--radius-full); display:block; }
+.ayuda-slack{
+  width:20px; height:20px; border:1px solid #ffffff59; border-radius:var(--radius-full);
+  display:grid; place-items:center; font-size:12px; color:#ffffffb3;
+}
 .slack-buscador{
   justify-self:center;
   width:min(520px, 100%);
@@ -74,26 +82,28 @@
   background:var(--slack-sidebar);
   color:#ffffffd9;
   display:grid;
-  grid-template-rows:auto auto 1fr;
+  grid-template-rows:auto 1fr;
   min-height:0;
   border-right:1px solid #ffffff1a;
 }
 .sidebar-header{
   padding:var(--space-12) var(--space-16);
   border-bottom:1px solid #ffffff1a;
+  display:flex; align-items:center; gap:var(--space-8);
 }
 .sidebar-header h2{ margin:0; font-size:15px; font-weight:900; color:#fff; letter-spacing:-.01em; }
 .sidebar-header p{ margin:2px 0 0; font-size:12px; color:#ffffffb3; }
-.sidebar-acciones{ padding:var(--space-8) var(--space-12); }
-.sidebar-nueva{
-  width:100%; min-height:32px;
-  background:#ffffff14; border:1px solid #ffffff26; border-radius:var(--radius-md);
-  color:#ffffffd9; font-size:13px; font-weight:700;
+.sidebar-redactar{
+  margin-left:auto; width:32px; height:32px; flex:none;
+  background:#ffffff14; border:1px solid #ffffff40; border-radius:var(--radius-full);
+  color:#fff; font-size:14px; display:grid; place-items:center;
 }
+.sidebar-redactar:hover{ background:#ffffff26; }
 .sidebar-lista{ overflow-y:auto; padding:var(--space-8) 0 var(--space-24); }
 .sidebar-seccion{
   padding:var(--space-12) var(--space-16) var(--space-4);
   font-size:13px; font-weight:700; color:#ffffffb3;
+  display:flex; align-items:center; gap:6px;
 }
 .sidebar-item{
   width:100%; min-height:28px;
@@ -126,34 +136,74 @@
   border:2px solid var(--slack-sidebar);
 }
 .avatar.en-claro .presencia{ border-color:#fff; }
+/* RITMO no lleva inicial: lleva su marca sobre blanco, como una app de Slack */
+.avatar--app{ background:#fff; box-shadow:inset 0 0 0 1px #0000001a; }
+.slack-sidebar .avatar--app{ box-shadow:inset 0 0 0 1px #ffffff26; }
 
 /* Main */
 .slack-main{
   background:#fff;
-  display:grid; grid-template-rows:auto 1fr auto;
+  display:grid; grid-template-rows:auto 1fr auto auto;
   min-height:0; min-width:0;
 }
 .main-header{
-  height:49px; padding:0 var(--space-16);
-  display:flex; align-items:center; gap:var(--space-12);
+  padding:var(--space-8) var(--space-16) 0;
+  display:flex; flex-direction:column; gap:2px;
   border-bottom:1px solid var(--neutral-200);
 }
+.main-header-titulo{ display:flex; align-items:center; gap:var(--space-8); min-height:28px; }
 .main-header h1{ margin:0; font-size:15px; font-weight:900; }
 .main-header .meta{ color:#616061; font-size:13px; }
 .main-header .derecha{ margin-left:auto; display:flex; gap:var(--space-8); }
+
+/* Pestañas del DM de RITMO (Figma L-00) */
+.main-tabs{ display:flex; gap:var(--space-16); }
+.main-tab{
+  background:none; border:0; padding:var(--space-8) 0;
+  font-size:14px; color:#616061; font-weight:700;
+  border-bottom:2px solid transparent;
+}
+.main-tab:hover{ color:#1d1c1d; }
+.main-tab--activa{ color:#1d1c1d; border-bottom-color:#1d1c1d; }
+
+/* Accesos grandes encima del composer (Figma L-00) */
+.accesos{
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--space-12);
+  padding:var(--space-8) var(--space-16) 0;
+}
+.accesos .acceso{
+  display:flex; align-items:center; gap:var(--space-12);
+  min-height:64px; padding:var(--space-12) var(--space-16);
+  background:#fff; border:1px solid var(--neutral-200); border-radius:var(--radius-md);
+  text-align:left; color:#1d1c1d;
+}
+.accesos .acceso:hover{ border-color:#1d1c1d; }
+.acceso-glifo{
+  width:32px; height:32px; flex:none; border-radius:var(--radius-full);
+  background:var(--violet-50); color:var(--violet-600);
+  display:grid; place-items:center; font-size:16px;
+}
+.acceso strong{ display:block; font-size:15px; }
+.acceso small{ display:block; color:#616061; font-size:13px; }
 
 .mensajes{
   overflow-y:auto;
   padding:var(--space-16) 0 var(--space-8);
   min-height:0;
 }
+/* Píldora centrada entre dos líneas, como en Slack (Figma L-00) */
 .dia-separador{
-  display:flex; align-items:center; gap:var(--space-12);
+  display:flex; align-items:center; gap:0;
   margin:var(--space-16) var(--space-16) var(--space-8);
   color:#616061; font-size:13px; font-weight:700;
 }
 .dia-separador::before, .dia-separador::after{
   content:''; height:1px; background:var(--neutral-200); flex:1;
+}
+.dia-separador span{
+  padding:var(--space-4) var(--space-12); margin:0 var(--space-8);
+  border:1px solid var(--neutral-200); border-radius:var(--radius-full);
+  background:#fff; white-space:nowrap;
 }
 
 /* Mensaje */
@@ -301,4 +351,9 @@
   background:var(--neutral-200); color:#454245;
   border-radius:3px; padding:1px 5px;
   font-size:11px; font-weight:700; letter-spacing:.02em;
+}
+
+/* Por debajo del tamaño de diseño (§9) los accesos se apilan en vez de aplastarse */
+@media (max-width:1180px){
+  .accesos{ grid-template-columns:1fr; }
 }

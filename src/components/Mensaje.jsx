@@ -12,7 +12,7 @@ export function Mensaje({ autor = 'ritmo', hora = '9:00', dotEstado = null, chil
       <div>
         <div className="cabeza">
           <span className="autor">{usuario.nombre}</span>
-          {usuario.esApp && <span className="etiqueta-app">App</span>}
+          {usuario.esApp && <span className="etiqueta-app">APP</span>}
           <span className="hora">{hora}</span>
         </div>
         <div className="cuerpo">{children}</div>
@@ -48,5 +48,9 @@ export function BotonSlack({ variante = 'normal', children, ...props }) {
 }
 
 export function DiaSeparador({ children = 'Hoy' }) {
-  return <div className="dia-separador">{children}</div>;
+  return (
+    <div className="dia-separador">
+      <span>{children}</span>
+    </div>
+  );
 }

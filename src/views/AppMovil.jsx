@@ -91,15 +91,18 @@ export default function AppMovil() {
           <CambiarColor onVolver={() => setCambiandoColor(false)} />
         ) : (
           <>
-            <h2 className="movil-titulo">Hola, Laura</h2>
-            <p className="movil-texto">{HOY.largo}</p>
+            {/* Jerarquía del Figma APP-04, con el copy de C5 */}
+            <h2 className="movil-titulo movil-titulo--grande">Inicio</h2>
+            <p className="movil-texto">Ordena tu día y pide un ajuste cuando algo no cabe.</p>
 
-            <div className="tarjeta">
-              <h3>Tu RITMO Dot</h3>
-              <p style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 'var(--space-8)' }}>
-                <span className="bolita" style={{ background: dot.color }} aria-hidden="true" />
-                <strong style={{ color: 'var(--neutral-900)' }}>{dot.nombre}</strong>
-              </p>
+            <div className="tarjeta tarjeta-dot">
+              <div className="dot-fila">
+                <span className="dot-grande" style={{ background: dot.color }} aria-hidden="true" />
+                <span>
+                  <small>Tu RITMO Dot</small>
+                  <strong>{dot.nombre}</strong>
+                </span>
+              </div>
               {estado.dot.razon && <p>Cambió porque {estado.dot.razon}.</p>}
               <p>Tu equipo solo ve el color, no la razón.</p>
               <button className="boton-app boton-app--secundario" onClick={() => setCambiandoColor(true)}>
@@ -108,7 +111,7 @@ export default function AppMovil() {
             </div>
 
             <div className="tarjeta">
-              <h3>Tu día</h3>
+              <h3>Tu día · {HOY.largo}</h3>
               {AGENDA_HOY.map((e) => (
                 <p key={e.id} style={{ marginBottom: 6 }}>
                   <strong style={{ color: 'var(--neutral-900)' }}>{e.hora}</strong> · {e.titulo}
