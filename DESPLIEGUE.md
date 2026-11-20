@@ -159,7 +159,13 @@ salón hace perder la sesión completa, y eso solo se descubre probando ahí.
 
 ---
 
-## 6. Cómo republicar
+## 6. Caché del navegador
+
+Los archivos del build llevan un hash en el nombre (`assets/index-XXXX.js`), así que
+al republicar el navegador siempre baja la versión nueva. Si aun así ves algo viejo,
+abre la URL con un parámetro cualquiera (`?v=2`) o recarga con Ctrl+F5.
+
+## 7. Cómo republicar
 
 ```bash
 git add -A && git commit -m "ajuste de copy" && git push

@@ -5,16 +5,7 @@ export default defineConfig({
   // Rutas relativas: el build sirve igual en la raíz de un dominio o en una subcarpeta
   base: './',
   plugins: [react()],
-  // Nombres de salida fijos (sin hash): el prototipo no necesita cache busting y
-  // así el HTML que se publica no cambia en cada build.
-  build: {
-    rollupOptions: {
-      output: {
-        entryFileNames: 'assets/ritmo.js',
-        chunkFileNames: 'assets/[name].js',
-        assetFileNames: 'assets/ritmo.[ext]',
-      },
-    },
-  },
+  // Con hash en el nombre: si el nombre fuera fijo, el navegador del moderador
+  // podría quedarse con una versión vieja en caché justo el día de la prueba.
   server: { port: 5173, open: false }
 })
