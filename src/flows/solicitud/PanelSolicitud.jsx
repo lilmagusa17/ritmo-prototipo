@@ -197,21 +197,8 @@ export default function PanelSolicitud() {
         ...armarSolicitud(borrador),
         historial: [{ at: estado.reloj, actor: 'laura', accion: 'Enviaste la solicitud' }],
       };
+      /* El mensaje del hilo (L-05) lo arma SOLICITUD_ENVIAR, para que no salga dos veces */
       dispatch({ type: 'SOLICITUD_ENVIAR', solicitud });
-      dispatch({
-        type: 'CHAT_PUSH',
-        mensaje: {
-          de: 'ritmo',
-          at: estado.reloj,
-          texto: 'Listo. Le envié tu solicitud a Miguel.',
-          attachment: {
-            titulo: `${cfg.titulo} · enviada`,
-            tono: 'verde',
-            fecha: { etiqueta: cfg.etiquetaFecha, original: cfg.fechaOriginal, nueva: propuesta },
-            lineas: ['Te aviso aquí mismo cuando responda.'],
-          },
-        },
-      });
       setErrorEnvio(false);
       setConsentido(false);
       irA('L-05');

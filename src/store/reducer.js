@@ -172,6 +172,27 @@ export function reducer(estado, accion) {
           solicitudes: [{ ...accion.solicitud, estado: 'pendiente' }, ...estado.solicitudes],
           borrador: null,
           panel: { abierto: true, pantalla: 'L-05', lado: 'laura' },
+          /* El envío también queda en el hilo, no solo en el panel (Figma L-05) */
+          chat: [
+            ...estado.chat,
+            {
+              id: nuevoId('msg'),
+              de: 'ritmo',
+              at: estado.reloj,
+              texto: 'Tu solicitud llegó a Miguel.',
+              chip: 'pendiente',
+              attachment: {
+                etiqueta: 'Lo que enviaste',
+                fecha: {
+                  etiqueta: accion.solicitud.compromiso,
+                  original: accion.solicitud.fechaOriginal,
+                  nueva: accion.solicitud.propuesta,
+                },
+                lineas: [accion.solicitud.tipoTitulo, 'Te aviso aquí mismo cuando responda.'],
+                pie: 'Puedes cancelarla mientras Miguel no responda.',
+              },
+            },
+          ],
         },
         `Laura envió una solicitud (${accion.solicitud.tipoTitulo})`,
       );
@@ -222,9 +243,10 @@ export function reducer(estado, accion) {
       const paraLaura =
         accion.respuesta === 'aceptar'
           ? {
-              texto: 'Miguel aceptó tu solicitud.',
+              texto: 'Miguel aceptó tu solicitud. Los demás compromisos siguen igual.',
+              chip: 'aceptada',
               attachment: {
-                titulo: 'Ajuste aceptado',
+                etiqueta: 'Qué cambió',
                 tono: 'verde',
                 fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.propuesta },
                 lineas: ['Queda como lo propusiste.'],
@@ -232,9 +254,10 @@ export function reducer(estado, accion) {
             }
           : accion.respuesta === 'alternativa'
             ? {
-                texto: 'Miguel propuso algo distinto.',
+                texto: `Miguel propone otra opción para ${sol.compromiso}.`,
+                chip: 'alternativa',
                 attachment: {
-                  titulo: 'Alternativa de Miguel',
+                  etiqueta: 'Compara antes de decidir',
                   tono: 'azul',
                   comparacion: {
                     actual: sol.fechaOriginal,
@@ -250,8 +273,9 @@ export function reducer(estado, accion) {
               }
             : {
                 texto: 'Miguel no pudo aceptar el ajuste.',
+                chip: 'rechazada',
                 attachment: {
-                  titulo: 'Sin acuerdo',
+                  etiqueta: 'Qué cambió',
                   tono: 'rojo',
                   fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
                   lineas: [accion.razon ? `Razón: ${accion.razon}` : 'Miguel no dejó una razón.'],
@@ -268,12 +292,37 @@ export function reducer(estado, accion) {
             id: nuevoId('msg'),
             de: 'ritmo',
             at: estado.reloj,
-            texto:
-              accion.respuesta === 'aceptar'
-                ? `Le avisé a Laura que aceptaste: ${sol.compromiso}.`
-                : accion.respuesta === 'alternativa'
-                  ? 'Le mandé tu alternativa a Laura. Te aviso cuando responda.'
-                  : 'Le avisé a Laura que no pudiste aceptar.',
+            ...(accion.respuesta === 'aceptar'
+              ? {
+                  texto: 'Aceptaste el ajuste. Se lo avisé a Laura.',
+                  chip: 'aceptada',
+                  attachment: {
+                    etiqueta: 'Qué cambió',
+                    tono: 'verde',
+                    fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.propuesta },
+                  },
+                }
+              : accion.respuesta === 'alternativa'
+                ? {
+                    texto: 'Enviaste tu alternativa. Te aviso cuando Laura responda.',
+                    chip: 'alternativa',
+                    attachment: {
+                      etiqueta: 'Tu respuesta',
+                      tono: 'azul',
+                      fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: accion.alternativa },
+                      lineas: [`Alternativa a: ${sol.propuesta}`],
+                    },
+                  }
+                : {
+                    texto: 'Le avisé a Laura que no pudiste aceptar.',
+                    chip: 'rechazada',
+                    attachment: {
+                      etiqueta: 'Qué cambió',
+                      tono: 'rojo',
+                      fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
+                      lineas: [accion.razon ? `Razón que diste: ${accion.razon}` : 'No dejaste una razón.'],
+                    },
+                  }),
           },
         ],
       };
@@ -319,16 +368,19 @@ export function reducer(estado, accion) {
             id: nuevoId('msg'),
             de: 'ritmo',
             at: estado.reloj,
-            texto: accion.acepta ? 'Listo, quedó acordado con Miguel.' : 'Listo. Le avisé que la alternativa no te sirve.',
+            texto: accion.acepta
+              ? 'Acuerdo entre tú y Miguel. Los demás compromisos siguen igual.'
+              : 'Listo. Le avisé que la alternativa no te sirve.',
+            chip: accion.acepta ? 'acordada' : 'rechazo_alt',
             attachment: accion.acepta
               ? {
-                  titulo: 'Acuerdo',
+                  etiqueta: 'Qué cambió',
                   tono: 'verde',
                   fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.alternativaMiguel },
                   lineas: ['Es lo que queda en firme.'],
                 }
               : {
-                  titulo: 'Sin acuerdo',
+                  etiqueta: 'Qué cambió',
                   tono: 'rojo',
                   fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
                   lineas: ['Nada cambió. Puedes volver a pedir un ajuste cuando quieras.'],
@@ -341,9 +393,25 @@ export function reducer(estado, accion) {
             id: nuevoId('msg'),
             de: 'ritmo',
             at: estado.reloj,
-            texto: accion.acepta
-              ? `Laura aceptó tu alternativa: ${sol.compromiso} · ${sol.alternativaMiguel}.`
-              : 'Laura dice que tu alternativa no le sirve. No hubo acuerdo.',
+            ...(accion.acepta
+              ? {
+                  texto: 'Hay acuerdo. Los demás compromisos siguen igual.',
+                  chip: 'acordada',
+                  attachment: {
+                    etiqueta: 'Qué cambió',
+                    tono: 'verde',
+                    fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: sol.alternativaMiguel },
+                  },
+                }
+              : {
+                  texto: 'Laura dice que tu alternativa no le sirve. No hubo acuerdo.',
+                  chip: 'rechazo_alt',
+                  attachment: {
+                    etiqueta: 'Qué cambió',
+                    tono: 'rojo',
+                    fecha: { etiqueta: sol.compromiso, original: sol.fechaOriginal, nueva: 'sigue igual' },
+                  },
+                }),
           },
         ],
       };

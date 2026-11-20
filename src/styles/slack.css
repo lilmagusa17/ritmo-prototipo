@@ -394,3 +394,10 @@
 /* El hilo se apoya abajo, como en Slack: los mensajes nuevos entran por el pie */
 .mensajes{ display:flex; flex-direction:column; }
 .mensajes::before{ content:''; margin-top:auto; }
+
+/* Etiqueta en versalitas dentro del attachment (Figma: "QUE CAMBIO") */
+.attachment-etiqueta{
+  margin:0 0 2px; font-size:12px; letter-spacing:.04em; text-transform:uppercase;
+  color:#454245; font-weight:700;
+}
+.linea-chip{ margin:0 0 var(--space-4); }

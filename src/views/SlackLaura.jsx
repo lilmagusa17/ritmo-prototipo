@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import SlackShell from '../components/SlackShell.jsx';
-import { Mensaje, Attachment, Acciones, BotonSlack, DiaSeparador } from '../components/Mensaje.jsx';
+import { Mensaje, Attachment, Acciones, BotonSlack, DiaSeparador, ChipEstado } from '../components/Mensaje.jsx';
 import FechaCambio, { ComparacionTres } from '../components/FechaCambio.jsx';
 import PanelSolicitud from '../flows/solicitud/PanelSolicitud.jsx';
 import PanelMisSolicitudes from '../flows/solicitud/PanelMisSolicitudes.jsx';
@@ -76,13 +76,19 @@ function ComposerLaura({ onEnviar }) {
 }
 
 /* Mensajes del hilo: los escribe Laura, RITMO, o los produce el flujo de solicitud */
-export function MensajeDeStore({ mensaje, onAccion, onChip }) {
+export function MensajeDeStore({ mensaje, onAccion, onChip, lado = 'laura' }) {
   const a = mensaje.attachment;
   return (
     <Mensaje autor={mensaje.de} hora={mensaje.at}>
+      {/* El estado va arriba del texto, como en el Figma (L-07 / M-06) */}
+      {mensaje.chip && (
+        <p className="linea-chip">
+          <ChipEstado estado={mensaje.chip} lado={lado} />
+        </p>
+      )}
       {mensaje.texto && <p>{mensaje.texto}</p>}
       {a && (
-        <Attachment titulo={a.titulo} tono={a.tono} pie={a.pie}>
+        <Attachment titulo={a.titulo} etiqueta={a.etiqueta} tono={a.tono} pie={a.pie}>
           {/* C7 · el color del Dot, con su nombre al lado: nunca solo el color */}
           {a.dot && (
             <p>
@@ -349,18 +355,19 @@ export default function SlackLaura() {
           {/* L-01 · aviso de choque */}
           {estado.avisoChoque === 'visible' && (
             <Mensaje hora="10:12">
-              <p>Llegó una tarea nueva y choca con algo que ya tienes.</p>
+              <p>
+                Llegó <strong>{TAREA_NUEVA.titulo}</strong> ({TAREA_NUEVA.fecha}), que pidió {TAREA_NUEVA.pedidaPor}.
+                Se cruza con {informe.titulo}, también para el jueves.
+              </p>
               <Attachment
-                titulo="Dos entregas el mismo día"
+                etiqueta="Se cruza con"
                 tono="ambar"
                 pie="Solo tú ves este aviso. Miguel no sabe nada hasta que tú envíes una solicitud."
               >
                 <p>
-                  <strong>{TAREA_NUEVA.titulo}</strong> · {TAREA_NUEVA.fecha} · lo pidió {TAREA_NUEVA.pedidaPor}
+                  <strong>{informe.titulo}</strong>
                 </p>
-                <p>
-                  <strong>{informe.titulo}</strong> · {informe.fecha}
-                </p>
+                <p style={{ color: '#616061' }}>Entrega: {informe.fecha}</p>
               </Attachment>
               <Acciones>
                 <BotonSlack

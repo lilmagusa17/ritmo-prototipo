@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import SlackShell from '../components/SlackShell.jsx';
 import { Mensaje, Attachment, Acciones, BotonSlack, DiaSeparador } from '../components/Mensaje.jsx';
+import { MensajeDeStore } from './SlackLaura.jsx';
 import FechaCambio from '../components/FechaCambio.jsx';
 import PanelRespuesta from '../flows/respuesta/PanelRespuesta.jsx';
 import { useStore } from '../store/StoreProvider.jsx';
@@ -238,11 +239,9 @@ export default function SlackMiguel() {
             </Mensaje>
           )}
 
-          {/* Confirmaciones de RITMO para Miguel (M-06 / M-06b) */}
+          {/* Confirmaciones de RITMO para Miguel (M-05 / M-06 / M-06b) */}
           {estado.chatMiguel.map((m) => (
-            <Mensaje key={m.id} hora={m.at}>
-              <p>{m.texto}</p>
-            </Mensaje>
+            <MensajeDeStore key={m.id} mensaje={m} lado="miguel" onAccion={(_boton, solicitudId) => solicitudId && abrirDetalle(solicitudId)} onChip={() => {}} />
           ))}
         </>
       ) : (
