@@ -100,73 +100,66 @@ export default function Control() {
         No lo ve el participante. Cada acción queda en el log con la hora simulada, para las notas de la sesión.
       </p>
 
-      {/* Guion de la sesión: abierto por defecto para el ensayo, se cierra en la prueba real */}
-      <details className="guion" open>
-        <summary>Guion de la sesión · montaje y tareas</summary>
+      {/* Guion de la sesión. Cerrado: en la prueba real el moderador lo abre si lo necesita. */}
+      <details className="guion">
+        <summary>Guion de la sesión · montaje y tareas (protocolo v2)</summary>
 
-        <h3>Montaje (3 ventanas, mismo navegador)</h3>
+        <h3>Montaje</h3>
         <ol>
           <li>
-            Abre el prototipo en <code>https://lilmagusa17.github.io/ritmo-prototipo/</code> y recarga con{' '}
-            <strong>Ctrl+F5</strong> una vez, por si el navegador tenía una versión vieja guardada.
+            Abre <code>https://lilmagusa17.github.io/ritmo-prototipo/</code> y recarga con <strong>Ctrl+F5</strong> una
+            vez, por si el navegador tenía guardada una versión vieja.
           </li>
           <li>
-            Laptop del participante: <code>#/slack/laura</code> a pantalla completa. Necesita 1280 px de ancho o más.
+            Ventana del participante: <code>#/slack/laura</code> a pantalla completa. Necesita 1280 px de ancho o más.
           </li>
           <li>
-            Segunda ventana con el teléfono: <code>#/app</code>.
+            Segunda ventana: <code>#/slack/miguel</code>, minimizada hasta T3.
           </li>
           <li>
-            Tablet o segunda pantalla junto al participante: <code>#/dot</code> (doble clic = pantalla completa).
+            Monitor del moderador: este panel.
           </li>
           <li>
-            Tu ventana: este panel. Si hay un segundo participante, dale <code>#/slack/miguel</code>; si no, responde tú
-            desde “Miguel responde”.
-          </li>
-          <li>
-            Antes de empezar: <strong>Reset total</strong>. El reloj queda en 9:00 y el onboarding arranca desde cero.
+            Toca <strong>Preparar sesión</strong>. Deja a Laura en el DM de RITMO, con el historial cargado y el reloj
+            en 9:00.
           </li>
         </ol>
 
-        <h3>Tareas</h3>
+        <h3>Tareas (protocolo v2)</h3>
         <ol>
           <li>
-            <strong>T1 · Configurar.</strong> “Acabas de instalar RITMO en Slack y quieres conectarlo con tu teléfono.”
-            En Slack toca “Conectar mi teléfono”; el código es <code>4 7 2 9</code> y se escribe en la app. No ayudes
-            con el copy: queremos saber si entiende qué se comparte y qué elige en “¿Tu equipo ve el nombre del
-            estado?”.
+            <strong>T0 · Chat.</strong> Reloj 9:00. “Cuéntale a RITMO cómo va tu día y pídele lo que te sirva para
+            organizarlo.”
           </li>
           <li>
-            <strong>T2 · Organizar el día.</strong> “Cuéntale a RITMO cómo va tu día.” Deja que escriba lo que quiera;
-            el bot responde por palabras clave (hoy, organiza, semana, saturada, pausa, ajuste, dot). Si repite la
-            misma petición, RITMO lo nota y ofrece otra salida en vez de repetirse: vale la pena ver si lo usa.
+            <strong>T1 · Aviso.</strong> Toca <strong>10:12</strong>. “Sigue con tu día. Si llega algo, léelo en voz
+            alta y haz lo que harías normalmente.”
           </li>
           <li>
-            <strong>T3 · Pedir un ajuste.</strong> Salta a <strong>10:12</strong>: el aviso de choque llega al hilo
-            como un mensaje más, debajo de lo último que haya escrito. Observa por dónde entra —el mensaje, la pestaña
-            “Mis solicitudes” o el acceso “Solicitar ajuste” de abajo— y si lee el bloque “Miguel sabrá que esta
-            solicitud es tuya” antes de marcar la casilla.
+            <strong>T2 · Solicitud.</strong> Cuando Laura esté en L-03, activa <strong>Error en el próximo envío</strong>.
+            Observa si lee “Miguel sabrá que esta solicitud es tuya” antes de marcar la casilla.
           </li>
           <li>
-            <strong>T4 · Negociar.</strong> Usa <strong>Miguel propone alternativa</strong> (o deja que lo haga el
-            segundo participante desde su tabla “Solicitudes del equipo”). Mira si compara las tres fechas
-            (actual · suya · de Miguel) antes de aceptar.
+            <strong>T3 · Miguel.</strong> Pasa a la ventana de Miguel. Cronometra M-02 → M-05. Esperado: martes 17.
           </li>
           <li>
-            <strong>T5 · Cancelar.</strong> Pídele que cancele una solicitud pendiente desde “Mis solicitudes” y luego
-            muéstrale la ventana de Miguel: ni en su chat ni en su tabla, y el contador bajó.
+            <strong>T4 · Evaluar.</strong> Vuelve a Laura.
           </li>
           <li>
-            <strong>T6 · Dot.</strong> Dispara <strong>Empieza bloque de foco</strong> sin avisar y no digas nada.
-            Anota si nota la luz, el mensaje de Slack o el aviso del teléfono, y en qué orden.
+            <strong>T5 · Historial.</strong> “Busca la solicitud del 3 de noviembre y dime cómo terminó.”
+          </li>
+          <li>
+            <strong>T6 · Cancelar.</strong> “Ya no necesitas la solicitud del Plan de capacitación. Retírala.”
+          </li>
+          <li>
+            <strong>T7 · Rechazar.</strong> Ventana de Miguel. “Responde la solicitud del Cierre de inventario.”
           </li>
         </ol>
 
-        <h3>Si algo se rompe</h3>
+        <h3>No tocar durante la sesión</h3>
         <p>
-          Reset total y volver a la tarea; con “Saltar onboarding” llegas a la tarea 2 en un clic. El estado vive en
-          este navegador: no cierres las ventanas entre tareas. El chat se guarda tal cual, así que un hilo de una
-          sesión anterior conserva sus mensajes hasta que hagas Reset total.
+          La tecla <strong>T</strong> y las horas <strong>11:00</strong>, <strong>14:00</strong> y <strong>18:00</strong>:
+          meten mensajes del Dot en el hilo de Laura. “Miguel responde” es solo plan B, si la ventana de Miguel falla.
         </p>
       </details>
 
