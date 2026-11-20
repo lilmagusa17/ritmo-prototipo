@@ -73,7 +73,8 @@ export default function Control() {
     const alTeclear = (ev) => {
       if (ev.target.matches('input, textarea')) return;
       const k = ev.key.toLowerCase();
-      if (k === 'r') dispatch({ type: 'RESET_TOTAL' });
+      /* Reset total pide Shift: con la "r" sola, una tecla suelta borraba la sesión */
+      if (k === 'r' && ev.shiftKey) dispatch({ type: 'RESET_TOTAL' });
       if (k === 'e') dispatch({ type: 'AVISO_CHOQUE', estadoAviso: 'visible' });
       if (k === 't') {
         const i = SALTOS_RELOJ.findIndex((s) => s.hora === estado.reloj);
@@ -179,7 +180,7 @@ export default function Control() {
                 Preparar sesión
               </button>
               <button className="bmod bmod--peligro" onClick={() => dispatch({ type: 'RESET_TOTAL' })}>
-                Reset total <span className="kbd">R</span>
+                Reset total <span className="kbd">⇧R</span>
               </button>
               <button className="bmod" onClick={() => dispatch({ type: 'SALTAR_ONBOARDING' })}>
                 Saltar onboarding
