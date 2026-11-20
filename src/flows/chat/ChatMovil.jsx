@@ -1,13 +1,21 @@
 /* Pestaña Chat de la app móvil (C4/C5).
    Mismo hilo que el DM de Slack: lo que escribe aquí aparece allá y al revés. */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useChatRitmo from './useChatRitmo.js';
 import { dotPorId } from '../../data/mock.js';
 
 export default function ChatMovil() {
   const { enviar, accion, escribiendo, hilo } = useChatRitmo();
   const [texto, setTexto] = useState('');
+  const fin = useRef(null);
+
+  /* El hilo baja solo cuando llega un mensaje: en el teléfono el scroll manual
+     dejaba la última respuesta fuera de pantalla. */
+  useEffect(() => {
+    const caja = fin.current?.closest('.pantalla-movil');
+    if (caja) caja.scrollTop = caja.scrollHeight;
+  }, [hilo.length, escribiendo]);
 
   const mandar = () => {
     if (!texto.trim()) return;
@@ -104,6 +112,8 @@ export default function ChatMovil() {
           </p>
         )}
       </div>
+
+      <span ref={fin} aria-hidden="true" />
 
       <div className="composer-movil">
         <textarea

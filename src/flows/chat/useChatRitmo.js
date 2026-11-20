@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
-import { detectarIntencion, responder } from '../../data/intents.js';
+import { detectarIntencion, responder, respuestaRepetida } from '../../data/intents.js';
 import { ESTADOS_DOT, dotPorId } from '../../data/mock.js';
 
 const DEMORA_MIN = 600;
@@ -20,14 +20,20 @@ export default function useChatRitmo() {
       const limpio = (texto || '').trim();
       if (!limpio) return;
 
-      dispatch({ type: 'CHAT_PUSH', mensaje: { de: 'laura', at: estado.reloj, texto: limpio } });
+      const intencion = detectarIntencion(limpio);
+
+      /* ¿Pidió lo mismo que la vez anterior? Entonces RITMO lo reconoce en vez de
+         repetir el mismo bloque palabra por palabra. */
+      const anterior = [...estado.chat].reverse().find((m) => m.de === 'laura' && m.intencion)?.intencion;
+      const repetida = anterior === intencion;
+
+      dispatch({ type: 'CHAT_PUSH', mensaje: { de: 'laura', at: estado.reloj, texto: limpio, intencion } });
       dispatch({ type: 'CHAT_ESCRIBIENDO', valor: true });
 
-      const intencion = detectarIntencion(limpio);
       const demora = DEMORA_MIN + Math.random() * (DEMORA_MAX - DEMORA_MIN);
 
       setTimeout(() => {
-        const r = responder(intencion, estado);
+        const r = (repetida && respuestaRepetida(intencion, estado)) || responder(intencion, estado);
         dispatch({ type: 'CHAT_ESCRIBIENDO', valor: false });
         dispatch({
           type: 'CHAT_PUSH',

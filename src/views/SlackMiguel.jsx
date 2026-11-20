@@ -54,6 +54,7 @@ export default function SlackMiguel() {
       onConversacion={setConv}
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Solicitudes del equipo'}
       panel={<PanelRespuesta />}
+      scrollSenal={estado.chatMiguel.length + lista.length}
     >
       {esRitmo ? (
         <>
@@ -140,9 +141,23 @@ export default function SlackMiguel() {
       ) : (
         <>
           <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
-          <Mensaje autor="camila" hora="9:12">
-            <p>Buenos días 👋 Dejo aquí el avance de la semana.</p>
-          </Mensaje>
+          {conv.tipo === 'dm' && conv.id === 'laura' ? (
+            <>
+              <Mensaje autor="miguel" hora="8:30">
+                <p>Buenos días, Laura. ¿Cómo vas con el informe?</p>
+              </Mensaje>
+              <Mensaje autor="ritmo" hora="9:00">
+                <p>Este es tu chat directo con Laura. Las solicitudes de ajuste no llegan por aquí.</p>
+                <Attachment titulo="Dónde llegan las solicitudes" pie="En el prototipo solo funciona el chat con RITMO.">
+                  <p>Cuando Laura envía una, te la paso en el chat de RITMO con su nombre y el compromiso.</p>
+                </Attachment>
+              </Mensaje>
+            </>
+          ) : (
+            <Mensaje autor="camila" hora="9:12">
+              <p>Buenos días 👋 Dejo aquí el avance de la semana.</p>
+            </Mensaje>
+          )}
         </>
       )}
     </SlackShell>

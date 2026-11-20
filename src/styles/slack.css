@@ -294,3 +294,11 @@
 .slack-titlebar :focus-visible{
   outline-color:#fff;
 }
+
+/* RITMO va aparte de las personas en el sidebar, y el header lo marca como app */
+.sidebar-item--app{ font-weight:700; }
+.etiqueta-app{
+  background:var(--neutral-200); color:#454245;
+  border-radius:3px; padding:1px 5px;
+  font-size:11px; font-weight:700; letter-spacing:.02em;
+}

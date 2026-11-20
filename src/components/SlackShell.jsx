@@ -2,7 +2,7 @@
    Layout fijo, pensado para ≥1280px (§9). El panel derecho se controla desde el store
    para que lo pueda abrir el chat, un botón de un mensaje o el panel del moderador. */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../store/StoreProvider.jsx';
 import { CANALES, DMS, USUARIOS, WORKSPACE, dotPorId } from '../data/mock.js';
 import { pendientesDeMiguel } from '../store/reducer.js';
@@ -22,10 +22,18 @@ export default function SlackShell({
   tituloPanel,
   panel = null,
   composer = null,
+  // Cambia cuando llega un mensaje nuevo: el hilo baja solo, como en Slack
+  scrollSenal = 0,
   children,
 }) {
   const { estado, dispatch } = useStore();
   const [railActivo, setRailActivo] = useState('inicio');
+  const hilo = useRef(null);
+
+  useEffect(() => {
+    const caja = hilo.current;
+    if (caja) caja.scrollTop = caja.scrollHeight;
+  }, [scrollSenal, conversacion?.id]);
 
   const yo = lado === 'laura' ? USUARIOS.laura : USUARIOS.miguel;
   const dms = DMS[lado];
@@ -94,6 +102,29 @@ export default function SlackShell({
             <button className="sidebar-nueva">+ Nuevo mensaje</button>
           </div>
           <div className="sidebar-lista">
+            {/* RITMO va en su propia sección: es la app, no una persona del equipo.
+                Mezclado con Miguel y Camila el participante no sabe con quién habla. */}
+            <h3 className="sidebar-seccion">Asistente</h3>
+            {dms
+              .filter((d) => USUARIOS[d.usuario].esApp)
+              .map((d) => {
+                const u = USUARIOS[d.usuario];
+                const mostrarBadge = lado === 'miguel' && pendientes > 0;
+                return (
+                  <button
+                    key={d.id}
+                    className="sidebar-item sidebar-item--app"
+                    aria-current={conv.tipo === 'dm' && conv.id === d.id}
+                    onClick={() => onConversacion?.({ tipo: 'dm', id: d.id })}
+                  >
+                    <Avatar usuario={u} tam={20} />
+                    {u.nombre}
+                    <span className="hash">app</span>
+                    {mostrarBadge && <span className="badge">{pendientes}</span>}
+                  </button>
+                );
+              })}
+
             <h3 className="sidebar-seccion">Canales</h3>
             {CANALES.map((c) => (
               <button
@@ -107,24 +138,23 @@ export default function SlackShell({
               </button>
             ))}
 
-            <h3 className="sidebar-seccion">Mensajes directos</h3>
-            {dms.map((d) => {
-              const u = USUARIOS[d.usuario];
-              const mostrarBadge = lado === 'miguel' && d.id === 'ritmo' && pendientes > 0;
-              return (
-                <button
-                  key={d.id}
-                  className="sidebar-item"
-                  aria-current={conv.tipo === 'dm' && conv.id === d.id}
-                  onClick={() => onConversacion?.({ tipo: 'dm', id: d.id })}
-                >
-                  <Avatar usuario={u} tam={20} dotEstado={dotDe(u.id)} presencia={u.esApp ? null : 'activo'} />
-                  {u.nombre}
-                  {u.esApp && <span className="hash">app</span>}
-                  {mostrarBadge && <span className="badge">{pendientes}</span>}
-                </button>
-              );
-            })}
+            <h3 className="sidebar-seccion">Mensajes directos · personas</h3>
+            {dms
+              .filter((d) => !USUARIOS[d.usuario].esApp)
+              .map((d) => {
+                const u = USUARIOS[d.usuario];
+                return (
+                  <button
+                    key={d.id}
+                    className="sidebar-item"
+                    aria-current={conv.tipo === 'dm' && conv.id === d.id}
+                    onClick={() => onConversacion?.({ tipo: 'dm', id: d.id })}
+                  >
+                    <Avatar usuario={u} tam={20} dotEstado={dotDe(u.id)} presencia="activo" />
+                    {u.nombre}
+                  </button>
+                );
+              })}
           </div>
         </aside>
 
@@ -137,10 +167,19 @@ export default function SlackShell({
                 {estado.dot.mostrarNombreEnSlack && <span className="meta">{dot.nombre}</span>}
               </>
             )}
-            {conv.tipo === 'dm' && conv.id === 'ritmo' && <span className="meta">App conectada a tu calendario</span>}
+            {conv.tipo === 'dm' && conv.id === 'ritmo' ? (
+              <>
+                <span className="etiqueta-app">APP</span>
+                <span className="meta">Asistente · conectado a tu calendario</span>
+              </>
+            ) : (
+              conv.tipo === 'dm' && <span className="meta">Chat directo con una persona · RITMO no lo lee</span>
+            )}
           </div>
 
-          <div className="mensajes">{children}</div>
+          <div className="mensajes" ref={hilo}>
+            {children}
+          </div>
 
           <div className="composer">{composer}</div>
         </main>

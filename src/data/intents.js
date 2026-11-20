@@ -45,6 +45,84 @@ const CHIPS_FALLBACK = [
   { texto: 'Cambiar mi Dot', envia: 'cambiar mi dot' },
 ];
 
+/* Cuando el participante repite lo mismo seguido, RITMO no vuelve a soltar el
+   mismo bloque: lo reconoce y ofrece la salida siguiente. Si una intención no
+   está aquí, se responde normal. */
+export function respuestaRepetida(intencion, estado) {
+  const dot = dotPorId(estado.dot.estado);
+
+  switch (intencion) {
+    case 'agenda':
+      return {
+        texto: 'Es la misma agenda que te mostré hace un momento. ¿Te la organizo o miramos la semana?',
+        chips: [
+          { texto: 'Proponme un orden', envia: 'organiza mi día' },
+          { texto: 'Ver mis entregas', envia: 'mis entregas de la semana' },
+        ],
+      };
+
+    case 'organizar':
+      return {
+        texto: 'Ese orden sigue en pie. Puedo proponerte otro o lo dejamos así.',
+        attachment: {
+          titulo: 'Tu día ya está ordenado',
+          tono: 'azul',
+          acciones: [
+            { id: 'me-sirve', texto: 'Déjalo así', variante: 'primario' },
+            { id: 'cambiar-orden', texto: 'Proponme otro orden' },
+          ],
+        },
+      };
+
+    case 'reordenar':
+      return {
+        texto: 'Por ahora manejo esas dos formas de armar el día. ¿Te quedas con alguna?',
+        chips: [
+          { texto: 'Volver al primero', envia: 'organiza mi día' },
+          { texto: 'Pedir un ajuste', envia: 'quiero pedir un ajuste' },
+        ],
+      };
+
+    case 'semana':
+      return {
+        texto: 'Las entregas siguen igual: eso solo cambia si pides un ajuste a Miguel.',
+        chips: [{ texto: 'Pedir un ajuste', envia: 'quiero pedir un ajuste' }],
+      };
+
+    case 'dot':
+      return {
+        texto: `Tu Dot sigue en ${dot.nombre}. Toca un color si quieres cambiarlo.`,
+        attachment: {
+          titulo: 'RITMO Dot',
+          dot: estado.dot.estado,
+          lineas: ['Tu equipo solo ve el color, no la razón.'],
+          acciones: ESTADOS_DOT.filter((e) => e.id !== estado.dot.estado).map((e) => ({
+            id: `dot-${e.id}`,
+            texto: e.nombre,
+          })),
+        },
+      };
+
+    case 'pausa':
+      return {
+        texto: 'La pausa sigue en pie cuando quieras tomarla.',
+        chips: [{ texto: 'Tomar la pausa ahora', envia: 'quiero una pausa' }],
+      };
+
+    case 'saturacion':
+      return {
+        texto: 'Sigo aquí. Dime qué quieres soltar primero y lo ordenamos.',
+        chips: [
+          { texto: 'Ver mis entregas', envia: 'mis entregas de la semana' },
+          { texto: 'Pedir un ajuste', envia: 'quiero pedir un ajuste' },
+        ],
+      };
+
+    default:
+      return null; // sin variante: responde normal
+  }
+}
+
 /* Respuestas. Reciben el estado para hablar de datos reales, no de ejemplos. */
 export function responder(intencion, estado) {
   const informe = COMPROMISOS[0];

@@ -206,15 +206,52 @@ function OnboardingLaura() {
   );
 }
 
-function CanalDemo({ nombre }) {
+/* Conversaciones que no son RITMO. Están para que el workspace se sienta real,
+   y sobre todo para que quede claro que hablar con Miguel no es hablar con RITMO. */
+function ConversacionDemo({ conv }) {
+  if (conv.tipo === 'canal') {
+    return (
+      <>
+        <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+        <Mensaje autor="camila" hora="9:12">
+          <p>Buenos días 👋 Dejo aquí el avance de la semana en #{conv.id}.</p>
+        </Mensaje>
+        <Mensaje autor="miguel" hora="9:20">
+          <p>Gracias, Camila. Lo reviso después del daily.</p>
+        </Mensaje>
+      </>
+    );
+  }
+
+  if (conv.id === 'miguel') {
+    return (
+      <>
+        <DiaSeparador>Ayer · lun 9 nov</DiaSeparador>
+        <Mensaje autor="miguel" hora="16:40">
+          <p>Laura, ¿alcanzas a dejar el informe antes del jueves?</p>
+        </Mensaje>
+        <Mensaje autor="laura" hora="16:52">
+          <p>Voy con eso. Si se complica te aviso.</p>
+        </Mensaje>
+        <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
+        <Mensaje autor="ritmo" hora="9:00">
+          <p>Este es tu chat directo con Miguel. Yo no leo lo que escriben aquí.</p>
+          <Attachment titulo="Los ajustes no se piden por aquí" pie="En el prototipo solo funciona el chat con RITMO.">
+            <p>Para pedir un ajuste, escríbeme en el chat de RITMO: ahí revisas qué verá Miguel antes de enviar nada.</p>
+          </Attachment>
+        </Mensaje>
+      </>
+    );
+  }
+
   return (
     <>
       <DiaSeparador>Hoy · {HOY.corto}</DiaSeparador>
-      <Mensaje autor="camila" hora="9:12">
-        <p>Buenos días 👋 Dejo aquí el avance de la semana en #{nombre}.</p>
+      <Mensaje autor="camila" hora="10:05">
+        <p>Hola Laura, te paso el Reporte de ventas para Comercial. Lo necesito el jueves 12.</p>
       </Mensaje>
-      <Mensaje autor="miguel" hora="9:20">
-        <p>Gracias, Camila. Lo reviso después del daily.</p>
+      <Mensaje autor="ritmo" hora="10:12">
+        <p>Este es tu chat directo con Camila. Yo no leo lo que escriben aquí.</p>
       </Mensaje>
     </>
   );
@@ -248,6 +285,10 @@ export default function SlackLaura() {
       tituloPanel={TITULOS_PANEL[estado.panel.pantalla] || 'Pedir un ajuste'}
       panel={esMisSolicitudes ? <PanelMisSolicitudes /> : <PanelSolicitud />}
       composer={esRitmo && onboardingListo ? <ComposerLaura onEnviar={enviar} /> : null}
+      scrollSenal={
+        /* ×2: así un mensaje nuevo nunca empata con el fin del "está escribiendo…" */
+        estado.chat.length * 2 + (escribiendo ? 1 : 0) + (onboardingListo ? 1 : 0)
+      }
     >
       {esRitmo && !onboardingListo ? (
         <OnboardingLaura />
@@ -365,7 +406,7 @@ export default function SlackLaura() {
           )}
         </>
       ) : (
-        <CanalDemo nombre={conv.id} />
+        <ConversacionDemo conv={conv} />
       )}
     </SlackShell>
   );
