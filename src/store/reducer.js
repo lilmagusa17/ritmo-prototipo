@@ -13,7 +13,8 @@ export const nuevoId = (prefijo = 'id') => {
 
 const anotar = (estado, texto) => ({
   ...estado,
-  log: [...estado.log, { at: estado.reloj, texto, real: new Date().toLocaleTimeString('es-CO') }],
+  /* La hora real en 24 h: "17:08:09" cabe en la columna del log, "5:08:09 p. m." no */
+  log: [...estado.log, { at: estado.reloj, texto, real: new Date().toLocaleTimeString('es-CO', { hour12: false }) }],
 });
 
 export function reducer(estado, accion) {
